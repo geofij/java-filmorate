@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -24,4 +25,6 @@ public class Film extends BaseUnit {
 
     @Min(1)
     private int duration;
+
+    private Set<Long> likes;
 }

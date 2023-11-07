@@ -2,8 +2,12 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.memory.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 
@@ -14,7 +18,8 @@ class FilmControllerTest {
 
     @BeforeEach
     void init() {
-        controller = new FilmController();
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        controller = new FilmController(new FilmService(filmStorage));
     }
 
     @Test
