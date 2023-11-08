@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.UserNotLikeFilmException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
@@ -36,6 +37,11 @@ public class FilmService extends BaseService<Film> {
 
     public Film deleteLike(long idFilm, long idUser) {
         Film film = storage.getById(idFilm);
+
+        if (get(idFilm).getLikes() == null || !get(idFilm).getLikes().contains(idUser)) {
+            throw new UserNotLikeFilmException(String.format("Film have not like from user id-%s.", idUser));
+        }
+
         if (film.getLikes() != null) {
             film.getLikes().remove(idUser);
         }

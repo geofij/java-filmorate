@@ -36,37 +36,31 @@ public class UserController extends BaseController<User, UserService> {
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable("id") long id) {
-        checkContainData(id);
         log.info("Getting user id-{}", id);
         return service.get(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable("id") long id, @PathVariable("friendId") long friendId) {
-        checkContainData(id);
-        checkContainData(friendId);
         log.info("Users id-{} and id-{} become friends", id, friendId);
         return service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
     public User deleteFriend(@PathVariable("id") long id, @PathVariable("friendId") long friendId) {
-        checkContainData(id);
-        checkContainData(friendId);
         log.info("Users id-{} and id-{} break friendship", id, friendId);
         return service.deleteFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends")
     public List<User> getUserFriends(@PathVariable("id") long id) {
-        checkContainData(id);
+        log.info("Getting user's id-{} friend list ", id);
         return service.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable("id") long id, @PathVariable("otherId") long otherId) {
-        checkContainData(id);
-        checkContainData(otherId);
+        log.info("Getting id-{} and id-{} common friends.", id, otherId);
         return service.getCommonFriends(id, otherId);
     }
 

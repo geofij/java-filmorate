@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
 
-import ru.yandex.practicum.filmorate.exception.UserNotLikeFilmException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -41,30 +40,25 @@ public class FilmController extends BaseController<Film, FilmService> {
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable("id") long id) {
-        checkContainData(id);
         log.info("Getting film id-{}", id);
         return service.get(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public Film addLike(@PathVariable("id") long id, @PathVariable("userId") long userId) {
-        checkContainData(id);
         log.info("Adding like to film id-{} by user id-{}", id, userId);
         return service.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLike(@PathVariable("id") long id, @PathVariable("userId") long userId) {
-        checkContainData(id);
-        if (service.get(id).getLikes() == null || !service.get(id).getLikes().contains(userId)) {
-            throw new UserNotLikeFilmException(String.format("Film have not like from user id-%s.", userId));
-        }
         log.info("Deleting like from film id-{} by user id-{}", id, userId);
         return service.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
+        log.info("Getting {} popular films", count);
         return service.getPopular(Integer.parseInt(count));
     }
 

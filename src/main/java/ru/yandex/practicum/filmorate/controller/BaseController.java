@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.BaseUnit;
 import ru.yandex.practicum.filmorate.service.BaseService;
 
@@ -36,10 +35,4 @@ public abstract class BaseController<T extends BaseUnit, K extends BaseService<T
     }
 
     public abstract void validate(T data);
-
-    protected void checkContainData(long id) {
-        if (service.get(id) == null) {
-            throw new DataNotFoundException(String.format("Data %s not found", service.get(id)));
-        }
-    }
 }

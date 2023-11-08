@@ -29,5 +29,5 @@ public class User extends BaseUnit {
     @PastOrPresent
     private LocalDate birthday;
 
-    private Set<Long> friends;
+    private Set<Long> friendIds;
 }

@@ -24,22 +24,22 @@ public class UserService extends BaseService<User> {
         User user = storage.getById(idUser);
         User friend = storage.getById(idFriend);
 
-        if (user.getFriends() == null) {
+        if (user.getFriendIds() == null) {
             friendList = new HashSet<>();
             friendList.add(idFriend);
 
-            user.setFriends(friendList);
+            user.setFriendIds(friendList);
         } else {
-            user.getFriends().add(idFriend);
+            user.getFriendIds().add(idFriend);
         }
 
-        if (friend.getFriends() == null) {
+        if (friend.getFriendIds() == null) {
             friendList = new HashSet<>();
             friendList.add(idUser);
 
-            friend.setFriends(friendList);
+            friend.setFriendIds(friendList);
         } else {
-            friend.getFriends().add(idUser);
+            friend.getFriendIds().add(idUser);
         }
 
         return user;
@@ -49,19 +49,19 @@ public class UserService extends BaseService<User> {
         User user = storage.getById(idUser);
         User friend = storage.getById(idFriend);
 
-        if (user.getFriends() != null) {
-            user.getFriends().remove(idFriend);
+        if (user.getFriendIds() != null) {
+            user.getFriendIds().remove(idFriend);
         }
 
-        if (friend.getFriends() != null) {
-            friend.getFriends().remove(idUser);
+        if (friend.getFriendIds() != null) {
+            friend.getFriendIds().remove(idUser);
         }
 
         return user;
     }
 
     public List<User> getFriends(long id) {
-        return storage.getById(id).getFriends().stream()
+        return storage.getById(id).getFriendIds().stream()
                 .map(storage::getById)
                 .collect(Collectors.toList());
     }
@@ -70,12 +70,12 @@ public class UserService extends BaseService<User> {
         User firstUser = storage.getById(idFirstUser);
         User secondUser = storage.getById(idSecondUser);
 
-        if (firstUser.getFriends() == null || secondUser.getFriends() == null) {
+        if (firstUser.getFriendIds() == null || secondUser.getFriendIds() == null) {
             return new ArrayList<>();
         }
 
-        Set<Long> friendsFirst = new HashSet<>(firstUser.getFriends());
-        friendsFirst.retainAll(secondUser.getFriends());
+        Set<Long> friendsFirst = new HashSet<>(firstUser.getFriendIds());
+        friendsFirst.retainAll(secondUser.getFriendIds());
 
         return friendsFirst.stream()
                 .map(storage::getById)
