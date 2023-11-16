@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -27,4 +28,6 @@ public class User extends BaseUnit {
 
     @PastOrPresent
     private LocalDate birthday;
+
+    private Set<Long> friendIds;
 }
