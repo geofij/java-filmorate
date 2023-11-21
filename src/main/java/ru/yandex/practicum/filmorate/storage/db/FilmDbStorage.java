@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.db;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -14,16 +14,15 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.HashSet;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void create(Film film) {
-        String sqlQuery = "insert into films (name, description, release_date, duration, mpa_id) "
-                + "values (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sqlQuery, film.getName(), film.getDescription(),
+        jdbcTemplate.update("insert into films (name, description, release_date, duration, mpa_id) "
+                        + "values (?, ?, ?, ?, ?)", film.getName(), film.getDescription(),
                 film.getReleaseDate(), film.getDuration(), film.getMpa().getId());
 
         this.updateGenres(film);
@@ -31,10 +30,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void update(Film film) {
-        String sqlQuery = "update films set "
-                + "name = ?, description = ?, release_date = ?,  duration = ?, mpa_id = ? "
-                + "where id = ?";
-        jdbcTemplate.update(sqlQuery,
+        jdbcTemplate.update("update films set "
+                        + "name = ?, description = ?, release_date = ?,  duration = ?, mpa_id = ? "
+                        + "where id = ?",
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -48,28 +46,26 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllData() {
-        String sqlQuery = "select f.id as film_id, "
+        return jdbcTemplate.query("select f.id as film_id, "
                 + "f.name as film_name, "
                 + "f.description as description, "
                 + "f.duration as duration, "
                 + "f.release_date as release_date, "
                 + "f.mpa_id as mpa_id, "
                 + "m.name as mpa_name"
-                + " from films as f join mpa as m on f.mpa_id = m.id";
-        return jdbcTemplate.query(sqlQuery, this::createFilmFromDb);
+                + " from films as f join mpa as m on f.mpa_id = m.id", this::createFilmFromDb);
     }
 
     @Override
     public Film getById(long id) {
-        String sqlQuery = "select f.id as film_id, "
+        List<Film> filmsList = jdbcTemplate.query("select f.id as film_id, "
                 + "f.name as film_name, "
                 + "f.description as description, "
                 + "f.duration as duration, "
                 + "f.release_date as release_date, "
                 + "f.mpa_id as mpa_id, "
                 + "m.name as mpa_name"
-                + " from films as f join mpa as m on f.mpa_id = m.id where f.id = ?";
-        List<Film> filmsList = jdbcTemplate.query(sqlQuery, this::createFilmFromDb, id);
+                + " from films as f join mpa as m on f.mpa_id = m.id where f.id = ?", this::createFilmFromDb, id);
 
         if (filmsList.size() != 1) {
             throw new DataNotFoundException("Film id-{} not found");
@@ -80,14 +76,12 @@ public class FilmDbStorage implements FilmStorage {
 
     private void updateGenres(Film film) {
         if (film.getGenres() != null) {
-            String sqlQuery = "delete from film_genres where film_id = ?";
-            jdbcTemplate.update(sqlQuery, film.getId());
+            jdbcTemplate.update("delete from film_genres where film_id = ?", film.getId());
 
-            String newSqlQuery = "merge into film_genres (film_id, genre_id) values (?, ?)";
-            film.getGenres().forEach(genre -> jdbcTemplate.update(newSqlQuery, film.getId(), genre.getId()));
+            film.getGenres().forEach(genre -> jdbcTemplate.update("merge into film_genres (film_id, genre_id) "
+                    + "values (?, ?)", film.getId(), genre.getId()));
         } else {
-            String newSqlQuery = "delete from film_genres where film_id = ?";
-            jdbcTemplate.update(newSqlQuery, film.getId());
+            jdbcTemplate.update("delete from film_genres where film_id = ?", film.getId());
         }
     }
 
@@ -107,16 +101,16 @@ public class FilmDbStorage implements FilmStorage {
                 .rate(0)
                 .build();
 
-        String sqlQuery = "select count(*) as rate from likes where film_id = ?";
-        Integer rate = jdbcTemplate.queryForObject(sqlQuery, Integer.class, rs.getLong("id"));
+        Integer rate = jdbcTemplate.queryForObject("select count(*) as rate "
+                + "from likes where film_id = ?", Integer.class, rs.getLong("id"));
 
         if (rate != null) {
             film.setRate(rate);
         }
 
-        sqlQuery = "select * from film_genres as fg join genres as g on fg.genre_id = g.id where film_id = ?";
-        List<Genre> filmGenres = jdbcTemplate.query(sqlQuery,
-                (res, rn) -> GenreDbStorage.createGenre(res, rn, "genre_id"), rs.getLong("id"));
+        List<Genre> filmGenres = jdbcTemplate.query("select * from film_genres as fg " +
+                        "join genres as g on fg.genre_id = g.id where film_id = ?",
+                (res, rn) -> GenreDbStorage.createGenre(res, "genre_id"), rs.getLong("id"));
 
         film.setGenres(new HashSet<>(filmGenres));
 

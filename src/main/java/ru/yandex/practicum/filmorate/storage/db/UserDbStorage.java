@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.db;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -11,15 +11,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void create(User user) {
-        String sqlQuery = "insert into users (name, login, email, birthday) values (?, ?, ?, ?)";
-        jdbcTemplate.update(sqlQuery,
+        jdbcTemplate.update("insert into users (name, login, email, birthday) values (?, ?, ?, ?)",
                 user.getName(),
                 user.getLogin(),
                 user.getEmail(),
@@ -28,10 +27,9 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void update(User user) {
-        String sqlQuery = "update users set "
-                + "name = ?, login = ?, email = ?, birthday = ? "
-                + "where id = ?";
-        jdbcTemplate.update(sqlQuery,
+        jdbcTemplate.update("update users set "
+                        + "name = ?, login = ?, email = ?, birthday = ? "
+                        + "where id = ?",
                 user.getName(),
                 user.getLogin(),
                 user.getEmail(),
@@ -41,14 +39,13 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllData() {
-        String sqlQuery = "select * from users";
-        return jdbcTemplate.query(sqlQuery, UserDbStorage::createUserFromDb);
+        return jdbcTemplate.query("select * from users", UserDbStorage::createUserFromDb);
     }
 
     @Override
     public User getById(long id) {
-        String sqlQuery = "select * from users where id = ?";
-        List<User> usersList = jdbcTemplate.query(sqlQuery, UserDbStorage::createUserFromDb, id);
+        List<User> usersList = jdbcTemplate.query("select * from users where id = ?",
+                UserDbStorage::createUserFromDb, id);
 
         if (usersList.size() != 1) {
             throw new DataNotFoundException("User id-{} not found");

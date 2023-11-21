@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.db;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
@@ -11,21 +11,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class MpaDbStorage implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
     public List<Mpa> getAllData() {
-        String sqlQuery = "select * from mpa";
-        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> MpaDbStorage.createMpa(rs, rowNum, "id"));
+        return jdbcTemplate.query("select * from mpa",
+                MpaDbStorage::createMpa);
     }
 
     @Override
     public Mpa getById(long id) {
-        String sqlQuery = "select * from mpa where id = ?";
-        List<Mpa> mpaList = jdbcTemplate.query(sqlQuery, (rs, rowNum) -> MpaDbStorage.createMpa(rs, rowNum, "id"), id);
+        List<Mpa> mpaList = jdbcTemplate.query("select * from mpa where id = ?",
+                MpaDbStorage::createMpa, id);
 
         if (mpaList.size() != 1) {
             throw new DataNotFoundException("MPA id-{} not found");
@@ -34,9 +34,9 @@ public class MpaDbStorage implements MpaStorage {
         return mpaList.get(0);
     }
 
-    public static Mpa createMpa(ResultSet rs, int rowNum, String columnName) throws SQLException {
+    private static Mpa createMpa(ResultSet rs, int rowNum) throws SQLException {
         return Mpa.builder()
-                .id(rs.getLong(columnName))
+                .id(rs.getLong("id"))
                 .name(rs.getString("name"))
                 .build();
     }
