@@ -1,25 +1,21 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.junit.jupiter.api.BeforeEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.memory.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmControllerTest {
-    FilmController controller;
-
-    @BeforeEach
-    void init() {
-        FilmStorage filmStorage = new InMemoryFilmStorage();
-        controller = new FilmController(new FilmService(filmStorage));
-    }
+    private final FilmController controller;
 
     @Test
     void validateDateBeforeValid() {
@@ -29,6 +25,9 @@ class FilmControllerTest {
                 .description("Description")
                 .duration(75)
                 .releaseDate(LocalDate.of(1800, 1, 1))
+                .mpa(Mpa.builder()
+                        .id(1L)
+                        .build())
                 .build();
 
         assertThrows(ValidationException.class, () -> controller.validate(film), "Валидация прошла успешно.");
@@ -42,6 +41,9 @@ class FilmControllerTest {
                 .description("Description")
                 .duration(75)
                 .releaseDate(LocalDate.of(2000, 1, 1))
+                .mpa(Mpa.builder()
+                        .id(1L)
+                        .build())
                 .build();
 
         controller.validate(film);

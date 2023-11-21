@@ -1,68 +1,72 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserNotLikeFilmException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikesStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class FilmService extends BaseService<Film> {
+public class FilmService {
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+    private final LikesStorage likesStorage;
+
     @Autowired
-    public FilmService(FilmStorage storage) {
-        super(storage);
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       @Qualifier("userDbStorage") UserStorage userStorage,
+                       LikesStorage likesStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+        this.likesStorage = likesStorage;
     }
 
-    public Film addLike(long idFilm, long idUser) {
-        Set<Long> likeList;
-        Film film = storage.getById(idFilm);
-
-        if (film.getLikes() == null) {
-            likeList = new HashSet<>();
-            likeList.add(idUser);
-
-            film.setLikes(likeList);
-        } else {
-            film.getLikes().add(idUser);
-        }
-
-        return film;
+    public void create(Film film) {
+        filmStorage.create(film);
     }
 
-    public Film deleteLike(long idFilm, long idUser) {
-        Film film = storage.getById(idFilm);
+    public void update(Film film) {
+        filmStorage.getById(film.getId());
+        filmStorage.update(film);
+    }
 
-        if (get(idFilm).getLikes() == null || !get(idFilm).getLikes().contains(idUser)) {
-            throw new UserNotLikeFilmException(String.format("Film have not like from user id-%s.", idUser));
-        }
+    public List<Film> getAllFilms() {
+        return filmStorage.getAllData();
+    }
 
-        if (film.getLikes() != null) {
-            film.getLikes().remove(idUser);
-        }
+    public Film get(long id) {
+        return filmStorage.getById(id);
+    }
 
-        return film;
+    public void addLike(long idFilm, long idUser) {
+        filmStorage.getById(idFilm);
+        userStorage.getById(idUser);
+
+        likesStorage.addLike(idFilm, idUser);
+    }
+
+    public boolean deleteLike(long idFilm, long idUser) {
+        filmStorage.getById(idFilm);
+        userStorage.getById(idUser);
+
+        return likesStorage.deleteLike(idFilm, idUser);
     }
 
     public List<Film> getPopular(int count) {
-        List<Film> films = storage.getAllData();
+        List<Film> films = filmStorage.getAllData();
 
         if (count > films.size()) {
             count = films.size();
         }
 
         return films.stream()
-                .sorted(Comparator.comparing(film -> {
-                    if (film.getLikes() == null) {
-                        return 0;
-                    }
-                    return film.getLikes().size();
-                }, Comparator.reverseOrder()))
+                .sorted(Comparator.comparing(Film::getRate, Comparator.reverseOrder()))
                 .limit(count)
                 .collect(Collectors.toList());
     }

@@ -1,84 +1,77 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
-public class UserService extends BaseService<User> {
+public class UserService {
+    private final UserStorage userStorage;
+    private final FriendsStorage friendsStorage;
 
     @Autowired
-    public UserService(UserStorage storage) {
-        super(storage);
+    public UserService(@Qualifier("userDbStorage") UserStorage storage, FriendsStorage friendsStorage) {
+        this.userStorage = storage;
+        this.friendsStorage = friendsStorage;
     }
 
-    public User addFriend(long idUser, long idFriend) {
-        Set<Long> friendList;
-        User user = storage.getById(idUser);
-        User friend = storage.getById(idFriend);
-
-        if (user.getFriendIds() == null) {
-            friendList = new HashSet<>();
-            friendList.add(idFriend);
-
-            user.setFriendIds(friendList);
-        } else {
-            user.getFriendIds().add(idFriend);
-        }
-
-        if (friend.getFriendIds() == null) {
-            friendList = new HashSet<>();
-            friendList.add(idUser);
-
-            friend.setFriendIds(friendList);
-        } else {
-            friend.getFriendIds().add(idUser);
-        }
-
-        return user;
+    public void create(User user) {
+        userStorage.create(user);
     }
 
-    public User deleteFriend(long idUser, long idFriend) {
-        User user = storage.getById(idUser);
-        User friend = storage.getById(idFriend);
+    public void update(User user) {
+        userStorage.getById(user.getId());
+        userStorage.update(user);
+    }
 
-        if (user.getFriendIds() != null) {
-            user.getFriendIds().remove(idFriend);
-        }
+    public List<User> getAllUsers() {
+        return userStorage.getAllData();
+    }
 
-        if (friend.getFriendIds() != null) {
-            friend.getFriendIds().remove(idUser);
-        }
+    public User get(long id) {
+        return userStorage.getById(id);
+    }
 
-        return user;
+    public void addFriend(long idUser, long idFriend) {
+        userStorage.getById(idUser);
+        userStorage.getById(idFriend);
+
+        friendsStorage.addFriend(idUser, idFriend);
+    }
+
+    public boolean deleteFriend(long idUser, long idFriend) {
+        userStorage.getById(idUser);
+        userStorage.getById(idFriend);
+
+        return friendsStorage.deleteFriend(idUser, idFriend);
     }
 
     public List<User> getFriends(long id) {
-        return storage.getById(id).getFriendIds().stream()
-                .map(storage::getById)
-                .collect(Collectors.toList());
+        userStorage.getById(id);
+        return friendsStorage.getUserFriends(id);
     }
 
     public List<User> getCommonFriends(long idFirstUser, long idSecondUser) {
-        User firstUser = storage.getById(idFirstUser);
-        User secondUser = storage.getById(idSecondUser);
+        userStorage.getById(idFirstUser);
+        userStorage.getById(idSecondUser);
 
-        if (firstUser.getFriendIds() == null || secondUser.getFriendIds() == null) {
+        Set<User> friendsFirst = new HashSet<>(friendsStorage.getUserFriends(idFirstUser));
+        Set<User> friendsSecond = new HashSet<>(friendsStorage.getUserFriends(idSecondUser));
+
+        if (friendsFirst.isEmpty() || friendsSecond.isEmpty()) {
             return new ArrayList<>();
         }
 
-        Set<Long> friendsFirst = new HashSet<>(firstUser.getFriendIds());
-        friendsFirst.retainAll(secondUser.getFriendIds());
+        friendsFirst.retainAll(friendsSecond);
 
-        return friendsFirst.stream()
-                .map(storage::getById)
-                .collect(Collectors.toList());
+        return new ArrayList<>(friendsFirst);
     }
 }

@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.storage.AbstractStorage;
 
 import java.util.List;
 
+@Deprecated
 public class BaseService<T extends BaseUnit> {
     protected final AbstractStorage<T> storage;
 

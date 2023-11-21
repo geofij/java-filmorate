@@ -5,5 +5,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 @Component
+@Deprecated
 public class InMemoryFilmStorage extends InMemoryBaseStorage<Film> implements FilmStorage {
 }

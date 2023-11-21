@@ -4,6 +4,7 @@ import ru.yandex.practicum.filmorate.model.BaseUnit;
 
 import java.util.List;
 
+@Deprecated
 public interface AbstractStorage<T extends BaseUnit> {
     void create(T data);
 
