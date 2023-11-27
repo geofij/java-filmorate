@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.service.BaseService;
 
 import java.util.List;
 
+@Deprecated
 @Slf4j
 public abstract class BaseController<T extends BaseUnit, K extends BaseService<T>> {
     protected final K service;

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Deprecated
 public class InMemoryBaseStorage<T extends BaseUnit> implements AbstractStorage<T> {
     private final Map<Long, T> storage = new HashMap<>();
 

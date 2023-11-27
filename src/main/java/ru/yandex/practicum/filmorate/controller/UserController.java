@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
@@ -12,26 +13,34 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
-public class UserController extends BaseController<User, UserService> {
-    public UserController(UserService userService) {
-        super(userService);
-    }
+public class UserController {
+    private final UserService service;
+    private long idCounter;
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
-        return super.create(user);
+        validate(user);
+        ++idCounter;
+        user.setId(idCounter);
+        log.info("Creating user {}", user);
+        service.create(user);
+        return user;
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
-        return super.update(user);
+        validate(user);
+        log.info("Updating user {}", user);
+        service.update(user);
+        return user;
     }
 
     @GetMapping
     public List<User> getUsers() {
         log.info("Getting all users");
-        return super.getAllData();
+        return service.getAllUsers();
     }
 
     @GetMapping("/{id}")
@@ -41,13 +50,13 @@ public class UserController extends BaseController<User, UserService> {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable("id") long id, @PathVariable("friendId") long friendId) {
+    public void addFriend(@PathVariable("id") long id, @PathVariable("friendId") long friendId) {
         log.info("Users id-{} and id-{} become friends", id, friendId);
-        return service.addFriend(id, friendId);
+        service.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriend(@PathVariable("id") long id, @PathVariable("friendId") long friendId) {
+    public boolean deleteFriend(@PathVariable("id") long id, @PathVariable("friendId") long friendId) {
         log.info("Users id-{} and id-{} break friendship", id, friendId);
         return service.deleteFriend(id, friendId);
     }
@@ -64,7 +73,6 @@ public class UserController extends BaseController<User, UserService> {
         return service.getCommonFriends(id, otherId);
     }
 
-    @Override
     public void validate(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
