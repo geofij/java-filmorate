@@ -12,3 +12,13 @@ values (1, 'G'),
 (3, 'PG-13'),
 (4, 'R'),
 (5, 'NC-17');
+
+MERGE INTO feed_operation (id, name)
+values (1, 'REMOVE'),
+(2, 'ADD'),
+(3, 'UPDATE');
+
+MERGE INTO feed_type (id, name)
+values (1, 'LIKE'),
+(2, 'REVIEW'),
+(3, 'FRIEND');
