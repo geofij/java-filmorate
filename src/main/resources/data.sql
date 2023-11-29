@@ -18,6 +18,7 @@ values (1, 'REMOVE'),
 (2, 'ADD'),
 (3, 'UPDATE');
 
+
 MERGE INTO feed_type (id, name)
 values (1, 'LIKE'),
 (2, 'REVIEW'),
