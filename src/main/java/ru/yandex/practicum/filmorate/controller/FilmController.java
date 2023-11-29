@@ -70,7 +70,7 @@ public class FilmController {
         return service.getPopular(Integer.parseInt(count));
     }
 
-    @DeleteMapping("/id")
+    @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") long id) {
         return service.delete(id);
     }
