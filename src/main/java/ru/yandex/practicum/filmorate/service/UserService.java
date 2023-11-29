@@ -32,6 +32,10 @@ public class UserService {
         userStorage.update(user);
     }
 
+    public boolean delete(long id) {
+        return userStorage.delete(id);
+    }
+
     public List<User> getAllUsers() {
         return userStorage.getAllData();
     }

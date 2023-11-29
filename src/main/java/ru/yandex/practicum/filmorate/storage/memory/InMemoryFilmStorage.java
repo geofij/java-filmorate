@@ -7,4 +7,8 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 @Component
 @Deprecated
 public class InMemoryFilmStorage extends InMemoryBaseStorage<Film> implements FilmStorage {
+    @Override
+    public boolean delete(long id) {
+        return false;
+    }
 }

@@ -85,6 +85,13 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    @Override
+    public boolean delete(long id) {
+        if (getById(id) == null) return false;
+        jdbcTemplate.update("delete from films where id = ?", id);
+        return true;
+    }
+
     private Film createFilmFromDb(ResultSet rs, int rowNum) throws SQLException {
         Mpa filmMpa = Mpa.builder()
                 .id(rs.getLong("mpa_id"))

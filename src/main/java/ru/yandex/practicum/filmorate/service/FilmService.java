@@ -58,6 +58,10 @@ public class FilmService {
         return likesStorage.deleteLike(idFilm, idUser);
     }
 
+    public boolean delete(long id) {
+        return filmStorage.delete(id);
+    }
+
     public List<Film> getPopular(int count) {
         List<Film> films = filmStorage.getAllData();
 
