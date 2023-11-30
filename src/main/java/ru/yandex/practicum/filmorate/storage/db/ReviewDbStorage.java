@@ -42,7 +42,7 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review update(Review data) {
         jdbcTemplate.update("update review set is_positive = ?, description = ? where id = ?",
                 data.getIsPositive(),
-                data.getIsPositive(),
+                data.getContent(),
                 data.getReviewId()
         );
         return getById(data.getReviewId());
@@ -59,33 +59,35 @@ public class ReviewDbStorage implements ReviewStorage {
                 id
         );
         if (reviews.size() != 1) {
-            throw new DataNotFoundException("User id-{} not found");
+            throw new DataNotFoundException("Review id-{} not found");
         }
         return reviews.get(0);
     }
 
     @Override
-    public List<Review> getByFilmId(Long id) {
+    public List<Review> getByFilmId(Long id, Integer count) {
         return jdbcTemplate.query(
                 "select r.id , r.description , r.is_positive , r.user_id , r.film_id " +
                         ", ifnull(rl.useful, 0) as useful from review as r " +
                         "left join (select review_id, sum(case when is_positive = true then 1 else -1 end) as useful " +
                         "from review_like group by review_id) as rl on rl.review_id = r.id where r.film_id = ? " +
-                        "order by useful desc",
+                        "order by useful desc limit ?",
                 new ReviewRowMapper(),
-                id
+                id,
+                count
         );
     }
 
     @Override
-    public List<Review> getAll() {
+    public List<Review> getAll(Integer count) {
         return jdbcTemplate.query(
                 "select r.id , r.description , r.is_positive , r.user_id , r.film_id " +
                         ", ifnull(rl.useful, 0) as useful from review as r " +
                         "left join (select review_id, sum(case when is_positive = true then 1 else -1 end) as useful " +
                         "from review_like group by review_id) as rl on rl.review_id = r.id " +
-                        "order by useful desc",
-                new ReviewRowMapper()
+                        "order by useful desc limit ?",
+                new ReviewRowMapper(),
+                count
         );
     }
 

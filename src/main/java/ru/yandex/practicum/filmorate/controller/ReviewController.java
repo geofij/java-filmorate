@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -44,5 +46,10 @@ public class ReviewController {
         return ra;
     }
 
-
+    @GetMapping
+    public List<Review> getAny(@RequestParam(defaultValue = "0") @Min(0) Long filmId,
+                               @RequestParam(defaultValue = "10") @Min(1) Integer count) {
+        if (filmId == 0) return reviewService.getAll(count);
+        return reviewService.getByFilmId(filmId, count);
+    }
 }
