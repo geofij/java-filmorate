@@ -33,7 +33,7 @@ public class ReviewDbStorage implements ReviewStorage {
         jdbcTemplate.update("update review set is_positive = ?, description = ? where id = ?",
                 data.getIsPositive(),
                 data.getIsPositive(),
-                data.getId()
+                data.getReviewId()
         );
     }
 
@@ -56,7 +56,7 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public void delete(Review data) {
         jdbcTemplate.update("delete from review where id = ?",
-                data.getId()
+                data.getReviewId()
         );
     }
 
@@ -65,7 +65,7 @@ public class ReviewDbStorage implements ReviewStorage {
         @Override
         public Review mapRow(ResultSet rs, int rowNum) throws SQLException {
             return Review.builder()
-                    .id(rs.getLong("id"))
+                    .reviewId(rs.getLong("id"))
                     .content(rs.getString("description"))
                     .isPositive(rs.getBoolean("is_positive"))
                     .userId(rs.getLong("user_id"))
