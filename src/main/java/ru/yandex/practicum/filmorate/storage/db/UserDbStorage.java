@@ -56,8 +56,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public boolean delete(long id) {
-        if (getById(id) == null)
-            throw new DataNotFoundException("User id-{} not found");
+        getById(id);
         jdbcTemplate.update("delete from users where id = ?", id);
         return true;
     }

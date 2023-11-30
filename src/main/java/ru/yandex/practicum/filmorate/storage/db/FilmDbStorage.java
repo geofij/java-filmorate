@@ -87,8 +87,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public boolean delete(long id) {
-        if (getById(id) == null)
-            throw new DataNotFoundException("Film id-{} not found");
+        getById(id);
         jdbcTemplate.update("delete from films where id = ?", id);
         return true;
     }
