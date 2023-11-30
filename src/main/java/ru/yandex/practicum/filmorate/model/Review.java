@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Review extends BaseUnit {
-    @Size(max = 200)
+    @Size(max = 255)
     @NotBlank
     private String content;
 
