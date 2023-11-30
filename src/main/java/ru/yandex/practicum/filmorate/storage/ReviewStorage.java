@@ -10,5 +10,5 @@ public interface ReviewStorage {
 
     Review getById(Long id);
 
-    void delete(Long id);
+    void delete(Review data);
 }
