@@ -99,19 +99,19 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
-    public void addReaction(Review review, Boolean isPositive, User user) {
+    public void addReaction(Long reviewId, Boolean isPositive, Long userId) {
         jdbcTemplate.update("merge into review_like (user_id, review_id, is_positive) values (?, ?, ?)",
-                user.getId(),
-                review.getReviewId(),
+                userId,
+                reviewId,
                 isPositive
         );
     }
 
     @Override
-    public void delReaction(Review review, User user) {
+    public void delReaction(Long reviewId, Long userId) {
         jdbcTemplate.update("delete from review_like where user_id = ? and review_id = ?",
-                user.getId(),
-                review.getReviewId()
+                userId,
+                reviewId
         );
     }
 

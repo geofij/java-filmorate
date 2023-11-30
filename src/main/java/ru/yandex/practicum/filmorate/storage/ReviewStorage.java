@@ -19,8 +19,8 @@ public interface ReviewStorage {
 
     void delete(Long id);
 
-    void addReaction(Review review, Boolean isPositive, User user);
+    void addReaction(Long reviewId, Boolean isPositive, Long userId);
 
-    void delReaction(Review review, User user);
+    void delReaction(Long reviewId, Long userId);
 
 }

@@ -52,4 +52,28 @@ public class ReviewController {
         if (filmId == 0) return reviewService.getAll(count);
         return reviewService.getByFilmId(filmId, count);
     }
+
+    @PutMapping("/{id}/like/{userId}")
+    public Boolean addReviewLike(@PathVariable("id") Long id, @PathVariable("userId") Long userId) {
+        reviewService.addReaction(id, true, userId);
+        return true;
+    }
+
+    @PutMapping("/{id}/dislike/{userId}")
+    public Boolean addReviewDislike(@PathVariable("id") Long id, @PathVariable("userId") Long userId) {
+        reviewService.addReaction(id, false, userId);
+        return true;
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public Boolean delReviewLike(@PathVariable("id") Long id, @PathVariable("userId") Long userId) {
+        reviewService.delReaction(id, userId);
+        return true;
+    }
+
+    @DeleteMapping("/{id}/dislike/{userId}")
+    public Boolean delReviewDislike(@PathVariable("id") Long id, @PathVariable("userId") Long userId) {
+        reviewService.delReaction(id, userId);
+        return true;
+    }
 }

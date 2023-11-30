@@ -58,15 +58,15 @@ public class ReviewService {
         return reviewStorage.getAll(count);
     }
 
-    public void addReaction(Review review, Boolean isPositive, User user) {
-        reviewStorage.getById(review.getReviewId());
-        userStorage.getById(user.getId());
-        reviewStorage.addReaction(review, isPositive, user);
+    public void addReaction(Long reviewId, Boolean isPositive, Long userId) {
+        reviewStorage.getById(reviewId);
+        userStorage.getById(userId);
+        reviewStorage.addReaction(reviewId, isPositive, userId);
     }
 
-    public void delReaction(Review review, User user) {
-        reviewStorage.getById(review.getReviewId());
-        userStorage.getById(user.getId());
-        reviewStorage.delReaction(review, user);
+    public void delReaction(Long reviewId, Long userId) {
+        reviewStorage.getById(reviewId);
+        userStorage.getById(userId);
+        reviewStorage.delReaction(reviewId, userId);
     }
 }
