@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
 import java.sql.ResultSet;
@@ -82,6 +83,23 @@ public class ReviewDbStorage implements ReviewStorage {
     public void delete(Review data) {
         jdbcTemplate.update("delete from review where id = ?",
                 data.getReviewId()
+        );
+    }
+
+    @Override
+    public void addReaction(Review review, Boolean isPositive, User user) {
+        jdbcTemplate.update("merge into review_like (user_id, review_id, is_positive) values (?, ?, ?)",
+                user.getId(),
+                review.getReviewId(),
+                isPositive
+        );
+    }
+
+    @Override
+    public void delReaction(Review review, User user) {
+        jdbcTemplate.update("delete from review_like where user_id = ? and review_id = ?",
+                user.getId(),
+                review.getReviewId()
         );
     }
 
