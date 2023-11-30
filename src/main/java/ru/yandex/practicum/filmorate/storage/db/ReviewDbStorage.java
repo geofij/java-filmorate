@@ -54,6 +54,31 @@ public class ReviewDbStorage implements ReviewStorage {
     }
 
     @Override
+    public List<Review> getByFilmId(Long id) {
+        return jdbcTemplate.query(
+                "select r.id , r.description , r.is_positive , r.user_id , r.film_id " +
+                        ", ifnull(rl.useful, 0) as useful from review as r " +
+                        "left join (select review_id, sum(case when is_like = true then 1 else -1 end) as useful " +
+                        "from review_like group by review_id) as rl on rl.review_id = r.id where r.film_id = ? " +
+                        "order by useful desc",
+                new ReviewRowMapper(),
+                id
+        );
+    }
+
+    @Override
+    public List<Review> getAll() {
+        return jdbcTemplate.query(
+                "select r.id , r.description , r.is_positive , r.user_id , r.film_id " +
+                        ", ifnull(rl.useful, 0) as useful from review as r " +
+                        "left join (select review_id, sum(case when is_like = true then 1 else -1 end) as useful " +
+                        "from review_like group by review_id) as rl on rl.review_id = r.id " +
+                        "order by useful desc",
+                new ReviewRowMapper()
+        );
+    }
+
+    @Override
     public void delete(Review data) {
         jdbcTemplate.update("delete from review where id = ?",
                 data.getReviewId()
