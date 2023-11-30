@@ -70,6 +70,11 @@ public class FilmController {
         return service.getPopular(Integer.parseInt(count));
     }
 
+    @DeleteMapping("/{id}")
+    public boolean delete(@PathVariable("id") long id) {
+        return service.delete(id);
+    }
+
     public void validate(Film film) {
         if (film.getReleaseDate().isBefore(START_RELEASE_DATE)) {
             log.debug("Fail validation film {}", film);

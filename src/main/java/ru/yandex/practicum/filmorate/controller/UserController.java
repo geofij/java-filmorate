@@ -73,6 +73,11 @@ public class UserController {
         return service.getCommonFriends(id, otherId);
     }
 
+    @DeleteMapping("/{id}")
+    public boolean delete(@PathVariable("id") long id) {
+        return service.delete(id);
+    }
+
     public void validate(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
