@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ReviewStorage {
 
-    void create(Review data);
+    Review create(Review data);
 
-    void update(Review data);
+    Review update(Review data);
 
     Review getById(Long id);
 
@@ -17,7 +17,7 @@ public interface ReviewStorage {
 
     List<Review> getAll();
 
-    void delete(Review data);
+    void delete(Long id);
 
     void addReaction(Review review, Boolean isPositive, User user);
 

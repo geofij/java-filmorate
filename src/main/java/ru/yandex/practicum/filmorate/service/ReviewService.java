@@ -13,28 +13,28 @@ import java.util.List;
 @Service
 public class ReviewService {
     private final ReviewStorage reviewStorage;
-
     private final UserStorage userStorage;
 
     @Autowired
-    public ReviewService(@Qualifier("ReviewDbStorage") ReviewStorage reviewStorage,
-                         @Qualifier("UserDbStorage") UserStorage userStorage) {
+    public ReviewService(@Qualifier("reviewDbStorage") ReviewStorage reviewStorage,
+                         @Qualifier("userDbStorage") UserStorage userStorage) {
         this.reviewStorage = reviewStorage;
         this.userStorage = userStorage;
     }
 
-    public void create (Review data) {
-        reviewStorage.create(data);
+    public Review create (Review data) {
+        return reviewStorage.create(data);
     }
 
-    public void update(Review data) {
+    public Review update(Review data) {
         reviewStorage.getById(data.getReviewId());
-        reviewStorage.update(data);
+        return reviewStorage.update(data);
     }
 
-    public void delete(Review data) {
-        reviewStorage.getById(data.getReviewId());
-        reviewStorage.delete(data);
+    public Boolean delete(Long id) {
+        reviewStorage.getById(id);
+        reviewStorage.delete(id);
+        return true;
     }
 
     public Review getById(Long id) {
