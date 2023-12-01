@@ -14,7 +14,6 @@ import java.util.List;
 public class LikesDbStorage implements LikesStorage {
     private final JdbcTemplate jdbcTemplate;
 
-
     @Override
     public List<SimpleEntry<Long, Long>> getAllData() {
         return jdbcTemplate.query(("select * from likes"),
