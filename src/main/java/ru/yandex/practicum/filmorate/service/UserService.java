@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.feed.Event;
+import ru.yandex.practicum.filmorate.model.feed.Operation;
+import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -16,11 +19,13 @@ import java.util.Set;
 public class UserService {
     private final UserStorage userStorage;
     private final FriendsStorage friendsStorage;
+    private final FeedStorage feedStorage;
 
     @Autowired
-    public UserService(@Qualifier("userDbStorage") UserStorage storage, FriendsStorage friendsStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage storage, FriendsStorage friendsStorage, FeedStorage feedStorage) {
         this.userStorage = storage;
         this.friendsStorage = friendsStorage;
+        this.feedStorage = feedStorage;
     }
 
     public void create(User user) {
@@ -49,11 +54,13 @@ public class UserService {
         userStorage.getById(idFriend);
 
         friendsStorage.addFriend(idUser, idFriend);
+        feedStorage.addFeed(idUser, Event.FRIEND, Operation.ADD, idFriend);
     }
 
     public boolean deleteFriend(long idUser, long idFriend) {
         userStorage.getById(idUser);
         userStorage.getById(idFriend);
+        feedStorage.addFeed(idUser, Event.FRIEND, Operation.REMOVE, idFriend);
 
         return friendsStorage.deleteFriend(idUser, idFriend);
     }

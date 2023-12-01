@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.feed.Event;
+import ru.yandex.practicum.filmorate.model.feed.Operation;
+import ru.yandex.practicum.filmorate.storage.FeedStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -14,17 +17,21 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
+
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private final LikesStorage likesStorage;
+    private final FeedStorage feedStorage;
 
     @Autowired
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
                        @Qualifier("userDbStorage") UserStorage userStorage,
-                       LikesStorage likesStorage) {
+                       LikesStorage likesStorage,
+                       FeedStorage feedStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.likesStorage = likesStorage;
+        this.feedStorage = feedStorage;
     }
 
     public void create(Film film) {
@@ -49,13 +56,17 @@ public class FilmService {
         userStorage.getById(idUser);
 
         likesStorage.addLike(idFilm, idUser);
+        feedStorage.addFeed(idUser, Event.LIKE, Operation.ADD, idFilm);
     }
 
     public boolean deleteLike(long idFilm, long idUser) {
         filmStorage.getById(idFilm);
         userStorage.getById(idUser);
 
+        feedStorage.addFeed(idUser, Event.LIKE, Operation.REMOVE, idFilm);
+
         return likesStorage.deleteLike(idFilm, idUser);
+
     }
 
     public boolean delete(long id) {

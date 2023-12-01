@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.feed.Feed;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService service;
+    private final FeedService feedService;
     private long idCounter;
 
     @PostMapping
@@ -76,6 +79,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") long id) {
         return service.delete(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Feed> getFeedByUserId(@PathVariable("id") long id) {
+        log.info("Getting feed for user id-{}", id);
+        service.get(id);
+        return feedService.getFeedByUserid(id);
     }
 
     public void validate(User user) {
