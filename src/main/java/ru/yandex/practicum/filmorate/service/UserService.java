@@ -3,24 +3,33 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.FriendsStorage;
+import ru.yandex.practicum.filmorate.storage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserStorage userStorage;
     private final FriendsStorage friendsStorage;
+    private final LikesStorage likesStorage;
+    private final FilmStorage filmStorage;
 
     @Autowired
-    public UserService(@Qualifier("userDbStorage") UserStorage storage, FriendsStorage friendsStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage storage,
+                       FriendsStorage friendsStorage,
+                       @Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       LikesStorage likesStorage) {
         this.userStorage = storage;
         this.friendsStorage = friendsStorage;
+        this.filmStorage = filmStorage;
+        this.likesStorage = likesStorage;
     }
 
     public void create(User user) {
@@ -77,5 +86,70 @@ public class UserService {
         friendsFirst.retainAll(friendsSecond);
 
         return new ArrayList<>(friendsFirst);
+    }
+
+    public Set<Film> getRecommendations(long id) {
+        Set<Film> recommendedFilms = new HashSet<>();
+        List<SimpleEntry<Long, Long>> filmLikes = likesStorage.getAllData();
+        Set<Long> likedFilmsByUser = findLikesByUser(id, filmLikes);
+        //вспомогательня мапа, содержащая ранг совпадения предпочтений "нашего" пользователя с остальными пользователями
+        Map<Long, Integer> freq = new HashMap<>();
+        //вспомогательная мапа, содержащая набор id фильмов, которые полайкал "другой" пользователь, и не лайкнул "наш"
+        Map<Long, Set<Long>> diff = new HashMap<>();
+        rankUsersPreferences(id, filmLikes, likedFilmsByUser, freq, diff);
+        populateFilmRecommendationsBasedOnRank(recommendedFilms, freq, diff);
+        return recommendedFilms;
+    }
+
+    private Set<Long> findLikesByUser(long userId, List<SimpleEntry<Long, Long>> filmLikes) {
+        //составляем набор фильмов, понравившихся "нашему" пользователю, для которого мы составляем рекомендации
+        return filmLikes.stream()
+                .filter(e -> e.getKey().equals(userId))
+                .map(SimpleEntry::getValue)
+                .collect(Collectors.toSet());
+    }
+
+    private void populateFilmRecommendationsBasedOnRank(Set<Film> recommendedFilms, Map<Long, Integer> freq,
+                                                        Map<Long, Set<Long>> diff) {
+        //сортируем мапу с рангами
+        Map<Long, Integer> sortedFreq = freq.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
+        for (Map.Entry<Long, Integer> entry : sortedFreq.entrySet()) {
+            if (diff.containsKey(entry.getKey()) && diff.get(entry.getKey()).size() > 0) {
+                for (Long filmId : diff.get(entry.getKey())) {
+                    recommendedFilms.add(filmStorage.getById(filmId));
+                }
+                break;
+            }
+        }
+    }
+
+    private void rankUsersPreferences(long userId, List<SimpleEntry<Long, Long>> filmLikes, Set<Long> likedFilmsByUser,
+                                      Map<Long, Integer> ranks, Map<Long, Set<Long>> diff) {
+        for (SimpleEntry<Long, Long> like : filmLikes) {
+            //проходимся по лайкам фильмов, оставленным не "нашим" пользователем и заполняем мапу с рангами
+            if (!like.getKey().equals(userId)) {
+                if (likedFilmsByUser.contains(like.getValue())) {
+                    if (!ranks.containsKey(userId)) {
+                        ranks.put(userId, 1);
+                    } else {
+                        //увеличиваем ранг совпадения предпочтений "нашего" пользователя и "другого" пользователя
+                        ranks.put(userId, ranks.get(userId) + 1);
+                    }
+                } else {
+                    //сохраняем id фильмов, которые "наш" не лайкнул, а "другие" лайкнули во вспомогательную мапу
+                    if (!diff.containsKey(userId)) {
+                        diff.put(userId, new HashSet<>(Arrays.asList(like.getValue())));
+                    } else {
+                        diff.get(userId).add(like.getValue());
+                    }
+                }
+            }
+        }
     }
 }

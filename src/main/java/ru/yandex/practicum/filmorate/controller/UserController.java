@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
 
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -76,6 +78,12 @@ public class UserController {
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") long id) {
         return service.delete(id);
+    }
+
+    @GetMapping ("/{id}/recommendations")
+    public Set<Film> getRecommendations(@PathVariable("id") long id){
+        log.info("Getting recommendations for user with id-{}", id);
+        return service.getRecommendations(id);
     }
 
     public void validate(User user) {
