@@ -39,16 +39,12 @@ public class FeedDbStorage implements FeedStorage {
         String sqlQuery = "INSERT INTO FEED(USER_ID, EVENT_TYPE, OPERATION, ENTITY_ID, TIMESTAMP)" +
                 "values (?, ?, ?, ?, ?)";
 
-        try {
             jdbcTemplate.update(sqlQuery,
                     feed.getUserId(),
                     feed.getEventType().name(),
                     feed.getOperation().name(),
                     feed.getEntityId(),
                     new Timestamp(System.currentTimeMillis())); // или используйте другой метод для получения времени
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
     }
 
     @Override
