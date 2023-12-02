@@ -75,6 +75,13 @@ public class FilmController {
         return service.delete(id);
     }
 
+    @GetMapping("/director/{directorId}")
+    public List<Film> getSortedFilmsByDirector(@RequestParam("sortBy") String sortType,
+                                               @PathVariable("directorId") long directorId) {
+        log.info("Getting director id-{}'s films sorted by {}", directorId, sortType);
+        return service.getSortedFilmsByDirector(sortType, directorId);
+    }
+
     public void validate(Film film) {
         if (film.getReleaseDate().isBefore(START_RELEASE_DATE)) {
             log.debug("Fail validation film {}", film);
