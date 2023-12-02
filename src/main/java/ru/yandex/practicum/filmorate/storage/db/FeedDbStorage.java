@@ -39,12 +39,14 @@ public class FeedDbStorage implements FeedStorage {
         String sqlQuery = "INSERT INTO FEED(USER_ID, EVENT_TYPE, OPERATION, ENTITY_ID, TIMESTAMP)" +
                 "values (?, ?, ?, ?, ?)";
 
-            jdbcTemplate.update(sqlQuery,
-                    feed.getUserId(),
-                    feed.getEventType().name(),
-                    feed.getOperation().name(),
-                    feed.getEntityId(),
-                    new Timestamp(System.currentTimeMillis())); // или используйте другой метод для получения времени
+        jdbcTemplate.update(sqlQuery,
+                feed.getUserId(),
+                feed.getEventType().name(),
+                feed.getOperation().name(),
+                feed.getEntityId(),
+                new Timestamp(System.currentTimeMillis()));
+        log.info("Create feed for user ID:{}, event: {}, operation :{}, entity ID: {}",
+                userId, eventType, operation, entityId);
     }
 
     @Override
@@ -57,9 +59,9 @@ public class FeedDbStorage implements FeedStorage {
     }
 
     @Override
-    public List<Feed> getFeedByUserid(long userId) {
+    public LinkedHashSet<Feed> getFeedByUserid(long userId) {
         String sqlQuery = "SELECT * FROM FEED WHERE USER_ID = ?";
-        List<Feed> feeds = jdbcTemplate.query(sqlQuery, FeedDbStorage::createFeed, userId);
+        LinkedHashSet<Feed> feeds = new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, FeedDbStorage::createFeed, userId));
         if (feeds.isEmpty()) {
             throw new DataNotFoundException("Feed with event ID-" + userId + " not found");
         } else return feeds;

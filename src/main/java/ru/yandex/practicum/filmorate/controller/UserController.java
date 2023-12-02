@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Slf4j
@@ -82,12 +83,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}/feed")
-    public List<Feed> getFeedByUserId(@PathVariable("id") long id) {
-        log.info("Getting feed for user id-{}", id);
+    public LinkedHashSet<Feed> getFeedByUserId(@PathVariable("id") long id) {
+        log.info("Getting feed for user id: {}", id);
         service.get(id);
         return feedService.getFeedByUserid(id);
     }
-
+//для теста
+    @GetMapping("/feed")
+    public LinkedHashSet<Feed> getAllFeeds() {
+        log.info("Getting all feeds");
+        return feedService.getAll();
+    }
+//не забыть улалить
     public void validate(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());

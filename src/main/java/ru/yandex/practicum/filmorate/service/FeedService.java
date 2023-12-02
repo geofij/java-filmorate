@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.feed.Feed;
 import ru.yandex.practicum.filmorate.storage.db.FeedDbStorage;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Slf4j
@@ -14,8 +15,12 @@ import java.util.List;
 public class FeedService {
     private final FeedDbStorage feedDbStorage;
 
-    public List<Feed> getFeedByUserid(long userId) {
+    public LinkedHashSet<Feed> getFeedByUserid(long userId) {
         log.info("Return feeds for user: {}", userId);
         return feedDbStorage.getFeedByUserid(userId);
+    }
+
+    public LinkedHashSet<Feed> getAll() {
+        return feedDbStorage.getAll();
     }
 }

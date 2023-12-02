@@ -62,7 +62,6 @@ public class FilmService {
     public boolean deleteLike(long idFilm, long idUser) {
         filmStorage.getById(idFilm);
         userStorage.getById(idUser);
-
         feedStorage.addFeed(idUser, Event.LIKE, Operation.REMOVE, idFilm);
 
         return likesStorage.deleteLike(idFilm, idUser);
