@@ -2,16 +2,16 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.web.bind.annotation.*;
-
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -64,9 +64,17 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
-        log.info("Getting {} popular films", count);
-        return service.getPopular(Integer.parseInt(count));
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count,
+                                      @RequestParam(required = false) String genreId,
+                                      @RequestParam(required = false) String year) {
+        log.info("Getting {} popular films. Filtering is {}", count, getFilteringLogRecord(genreId, year));
+        Long genreIdParsed = null;
+        Integer releaseYearParsed = null;
+        if(genreId != null)
+            genreIdParsed = Long.parseLong(genreId);
+        if(year != null)
+            releaseYearParsed = Integer.parseInt(year);
+        return service.getPopular(Integer.parseInt(count), genreIdParsed, releaseYearParsed);
     }
 
     @DeleteMapping("/{id}")
@@ -86,5 +94,21 @@ public class FilmController {
             log.debug("Fail validation film {}", film);
             throw new ValidationException("Film release date is invalid");
         }
+    }
+
+    private String getFilteringLogRecord(String genreId, String releaseYear) {
+        StringBuilder filterLoggerBuilder = new StringBuilder();
+        if (genreId == null && releaseYear == null) {
+            filterLoggerBuilder.append("disabled");
+        } else {
+            filterLoggerBuilder.append("enabled with filtering params: ");
+            Map<String, String> filteringParams = new HashMap<>();
+            if (genreId != null)
+                filteringParams.put("genreId", genreId);
+            if (releaseYear != null)
+                filteringParams.put("releaseYear", releaseYear);
+            filterLoggerBuilder.append(filteringParams);
+        }
+        return filterLoggerBuilder.toString();
     }
 }

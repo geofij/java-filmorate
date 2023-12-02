@@ -66,8 +66,8 @@ public class FilmService {
         return filmStorage.delete(id);
     }
 
-    public List<Film> getPopular(int count) {
-        List<Film> films = filmStorage.getAllData();
+    public List<Film> getPopular(int count, Long genreId, Integer releaseYear) {
+        List<Film> films = filmStorage.getFilteredData(genreId, releaseYear);
 
         if (count > films.size()) {
             count = films.size();

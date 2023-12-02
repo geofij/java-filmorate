@@ -146,6 +146,32 @@ public class FilmDbStorage implements FilmStorage {
         return true;
     }
 
+    @Override
+    public List<Film> getFilteredData(Long genreId, Integer releaseYear) {
+        StringBuilder queryBuilder = new StringBuilder("select f.id as film_id, "
+                + "f.name as film_name, "
+                + "f.description as description, "
+                + "f.duration as duration, "
+                + "f.release_date as release_date, "
+                + "f.mpa_id as mpa_id, "
+                + "m.name as mpa_name"
+                + " from films as f join mpa as m on f.mpa_id = m.id");
+
+        if (releaseYear != null) {
+            queryBuilder.append(" where extract(year from f.release_date) = ").append(releaseYear);
+        }
+        if (genreId != null) {
+            if (queryBuilder.indexOf("where") == -1) {
+                queryBuilder.append(" where ");
+            } else {
+                queryBuilder.append(" and ");
+            }
+            queryBuilder.append(" f.id in (select film_id from film_genres where genre_id = ").append(genreId).append(")");
+        }
+
+        return jdbcTemplate.query(queryBuilder.toString(), this::createFilmFromDb);
+    }
+
     private Film createFilmFromDb(ResultSet rs, int rowNum) throws SQLException {
         Mpa filmMpa = Mpa.builder()
                 .id(rs.getLong("mpa_id"))

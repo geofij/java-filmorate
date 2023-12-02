@@ -15,6 +15,11 @@ public class InMemoryFilmStorage extends InMemoryBaseStorage<Film> implements Fi
     }
 
     @Override
+    public List<Film> getFilteredData(Long genreId, Integer releaseYear) {
+        return null;
+    }
+
+    @Override
     public List<Film> getSortedFilmsByDirector(String sortType, long directorId) {
         return null;
     }
