@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode(of = "id")
 @SuperBuilder
 @NoArgsConstructor
-public class Director{
+public class Director {
     @NotNull
     private Long id;
 
