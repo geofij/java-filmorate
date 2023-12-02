@@ -16,6 +16,13 @@ import java.util.List;
 public class MpaDbStorage implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    private static Mpa createMpa(ResultSet rs, int rowNum) throws SQLException {
+        return Mpa.builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .build();
+    }
+
     @Override
     public List<Mpa> getAllData() {
         return jdbcTemplate.query("select * from mpa",
@@ -32,12 +39,5 @@ public class MpaDbStorage implements MpaStorage {
         }
 
         return mpaList.get(0);
-    }
-
-    private static Mpa createMpa(ResultSet rs, int rowNum) throws SQLException {
-        return Mpa.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .build();
     }
 }

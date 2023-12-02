@@ -11,8 +11,8 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -39,7 +39,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId()
-                );
+        );
 
         this.updateGenres(film);
     }
