@@ -27,9 +27,9 @@ public class UserService {
         userStorage.create(user);
     }
 
-    public void update(User user) {
+    public User update(User user) {
         userStorage.getById(user.getId());
-        userStorage.update(user);
+        return userStorage.update(user);
     }
 
     public boolean delete(long id) {

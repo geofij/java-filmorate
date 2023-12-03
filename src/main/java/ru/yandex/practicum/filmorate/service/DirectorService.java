@@ -16,8 +16,9 @@ public class DirectorService {
         return directorStorage.create(data);
     }
 
-    public void update(Director data) {
-        directorStorage.update(data);
+    public Director update(Director data) {
+        directorStorage.getById(data.getId());
+        return directorStorage.update(data);
     }
 
     public List<Director> getAllDirectors() {

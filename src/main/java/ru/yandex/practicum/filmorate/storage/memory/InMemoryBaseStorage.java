@@ -21,12 +21,14 @@ public class InMemoryBaseStorage<T extends BaseUnit> implements AbstractStorage<
     }
 
     @Override
-    public void update(T data) {
+    public T update(T data) {
         if (!storage.containsKey(data.getId())) {
             log.debug("Fail update data {}", data);
             throw new DataNotFoundException(String.format("Data %s not found", data));
         }
         storage.put(data.getId(), data);
+
+        return getById(data.getId());
     }
 
     @Override

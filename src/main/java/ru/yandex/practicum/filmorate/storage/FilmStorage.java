@@ -7,7 +7,7 @@ import java.util.List;
 public interface FilmStorage {
     void create(Film data);
 
-    void update(Film data);
+    Film update(Film data);
 
     List<Film> getAllData();
 

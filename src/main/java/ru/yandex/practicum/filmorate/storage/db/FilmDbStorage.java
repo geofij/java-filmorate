@@ -34,7 +34,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void update(Film film) {
+    public Film update(Film film) {
         jdbcTemplate.update("update films set "
                         + "name = ?, description = ?, release_date = ?,  duration = ?, mpa_id = ? "
                         + "where id = ?",
@@ -48,6 +48,8 @@ public class FilmDbStorage implements FilmStorage {
 
         this.updateGenres(film);
         this.updateDirectors(film);
+
+        return getById(film.getId());
     }
 
     @Override
@@ -118,25 +120,21 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void updateGenres(Film film) {
-        if (film.getGenres() != null) {
-            jdbcTemplate.update("delete from film_genres where film_id = ?", film.getId());
+        jdbcTemplate.update("delete from film_genres where film_id = ?", film.getId());
 
+        if (film.getGenres() != null) {
             film.getGenres().forEach(genre -> jdbcTemplate.update("merge into film_genres (film_id, genre_id) "
                     + "values (?, ?)", film.getId(), genre.getId()));
-        } else {
-            jdbcTemplate.update("delete from film_genres where film_id = ?", film.getId());
         }
     }
 
     private void updateDirectors(Film film) {
-        if (film.getDirectors() != null) {
-            jdbcTemplate.update("delete from film_director where film_id = ?", film.getId());
+        jdbcTemplate.update("delete from film_director where film_id = ?", film.getId());
 
+        if (film.getDirectors() != null) {
             film.getDirectors().forEach(director -> jdbcTemplate.update("merge into film_director "
                     + "(film_id, director_id) "
                     + "values (?, ?)", film.getId(), director.getId()));
-        } else {
-            jdbcTemplate.update("delete from film_director where film_id = ?", film.getId());
         }
     }
 

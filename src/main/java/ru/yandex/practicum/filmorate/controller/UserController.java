@@ -33,8 +33,7 @@ public class UserController {
     public User update(@Valid @RequestBody User user) {
         validate(user);
         log.info("Updating user {}", user);
-        service.update(user);
-        return user;
+        return service.update(user);
     }
 
     @GetMapping

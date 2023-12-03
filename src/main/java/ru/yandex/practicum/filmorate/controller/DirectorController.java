@@ -25,9 +25,8 @@ public class DirectorController {
 
     @PutMapping
     public Director update(@Valid @RequestBody Director director) {
-        directorService.update(director);
         log.info("Updating director {}", director);
-        return directorService.get(director.getId());
+        return directorService.update(director);
     }
 
     @GetMapping
@@ -44,6 +43,7 @@ public class DirectorController {
 
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") long id) {
+        log.info("Deleting director id-{}", id);
         return directorService.delete(id);
     }
 }

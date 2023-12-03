@@ -35,9 +35,9 @@ public class FilmService {
         filmStorage.create(film);
     }
 
-    public void update(Film film) {
+    public Film update(Film film) {
         filmStorage.getById(film.getId());
-        filmStorage.update(film);
+        return filmStorage.update(film);
     }
 
     public List<Film> getAllFilms() {

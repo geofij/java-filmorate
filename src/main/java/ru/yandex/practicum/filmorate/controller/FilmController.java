@@ -35,9 +35,8 @@ public class FilmController {
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         validate(film);
-        service.update(film);
         log.info("Updating film {}", film);
-        return service.get(film.getId());
+        return service.update(film);
     }
 
     @GetMapping

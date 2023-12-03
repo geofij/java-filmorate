@@ -35,10 +35,11 @@ public class DirectorDbStorage implements DirectorStorage {
     }
 
     @Override
-    public void update(Director data) {
+    public Director update(Director data) {
         jdbcTemplate.update("update director set name = ? where id = ?",
                 data.getName(),
                 data.getId());
+        return getById(data.getId());
     }
 
     @Override
