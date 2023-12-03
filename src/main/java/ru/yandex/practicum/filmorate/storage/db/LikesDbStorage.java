@@ -16,7 +16,7 @@ public class LikesDbStorage implements LikesStorage {
 
     @Override
     public List<SimpleEntry<Long, Long>> getAllData() {
-        return jdbcTemplate.query(("select * from likes"),
+        return jdbcTemplate.query(("select film_id, user_id from likes"),
                 (rs, rownum) -> new SimpleEntry<>(rs.getLong("user_id"),
                         rs.getLong("film_id")));
     }
