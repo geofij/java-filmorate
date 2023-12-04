@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,5 +75,13 @@ public class FilmService {
                 .sorted(Comparator.comparing(Film::getRate, Comparator.reverseOrder()))
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    public LinkedHashSet<Film> getCommonFilmsSortedByLikes(long userId, long friendId) {
+        if (userStorage.isTheyFriends(userId, friendId)) {
+            return filmStorage.getCommonFilmsSortedByLikes(userId, friendId);
+        } else {
+            throw new DataNotFoundException("Users " + userId + " and " + friendId + " isn't friends");
+        }
     }
 }

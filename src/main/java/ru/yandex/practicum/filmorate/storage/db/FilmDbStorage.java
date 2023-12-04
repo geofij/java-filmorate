@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Repository
@@ -122,5 +123,34 @@ public class FilmDbStorage implements FilmStorage {
         film.setGenres(new HashSet<>(filmGenres));
 
         return film;
+    }
+
+    @Override
+    public LinkedHashSet<Film> getCommonFilmsSortedByLikes(long userId, long friendId) {
+        String sqlQuery = "SELECT\n" +
+                "    f.id AS film_id,\n" +
+                "    f.name AS film_name,\n" +
+                "    f.description AS description,\n" +
+                "    f.duration AS duration,\n" +
+                "    f.release_date AS release_date,\n" +
+                "    f.mpa_id AS mpa_id,\n" +
+                "    m.name AS mpa_name,\n" +
+                "    COUNT(l.film_id) AS likes_count\n" +
+                "FROM\n" +
+                "    films AS f\n" +
+                "JOIN\n" +
+                "    mpa AS m ON f.mpa_id = m.id\n" +
+                "JOIN\n" +
+                "    likes AS l ON f.id = l.film_id\n" +
+                "WHERE\n" +
+                "    l.user_id IN (?, ?)\n" +
+                "GROUP BY\n" +
+                "    f.id, f.name, f.description, f.duration, f.release_date, f.mpa_id, m.name\n" +
+                "HAVING\n" +
+                "    COUNT(l.film_id) = 2\n" +
+                "ORDER BY\n" +
+                "    likes_count DESC, f.id;";
+
+        return new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, this::createFilmFromDb, userId, friendId));
     }
 }

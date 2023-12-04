@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Slf4j
@@ -71,6 +72,13 @@ public class FilmController {
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") long id) {
         return service.delete(id);
+    }
+
+    @GetMapping("/common")
+    public LinkedHashSet<Film> getCommonFilmsSortedByLikes(@RequestParam("userId") long userId,
+                                                           @RequestParam("friendId") long friendId) {
+        log.info("Getting common films for user:{}, and user:{}", userId, friendId);
+        return service.getCommonFilmsSortedByLikes(userId, friendId);
     }
 
     public void validate(Film film) {
