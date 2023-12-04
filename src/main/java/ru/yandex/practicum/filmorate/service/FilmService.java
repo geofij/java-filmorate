@@ -81,7 +81,9 @@ public class FilmService {
                 films.addAll(filmStorage.findByDirector(searchQuery));
             }
         }
-        return films;
+        return films.stream()
+                .sorted(Comparator.comparing(Film::getDirectors, (d1, d2) -> d2.size() - d1.size()))
+                .collect(Collectors.toList());
     }
 
     public List<Film> getPopular(int count) {
