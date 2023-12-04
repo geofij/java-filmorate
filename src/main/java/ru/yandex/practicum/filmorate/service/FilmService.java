@@ -76,10 +76,8 @@ public class FilmService {
         for (String byItem: searchByItems) {
             if (byItem.equals(SEARCH_BY_TITLE)) {
                 films.addAll(filmStorage.findByTitle(searchQuery));
-            }
-            else if (byItem.equals(SEARCH_BY_DIRECTOR)) {
-                films.addAll(filmStorage.findByDirector(searchQuery));
-            }
+            } else if (byItem.equals(SEARCH_BY_DIRECTOR)) {
+                films.addAll(filmStorage.findByDirector(searchQuery)); }
         }
         return films.stream()
                 .sorted(Comparator.comparing(Film::getDirectors, (d1, d2) -> d2.size() - d1.size()))
