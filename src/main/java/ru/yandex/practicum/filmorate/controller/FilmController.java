@@ -90,8 +90,7 @@ public class FilmController {
     @GetMapping("/search")
     public List<Film> searchFilms(@RequestParam(value = "query", defaultValue = "") String queryExpression,
                                   @RequestParam(value = "by", required = false, defaultValue = SEARCH_BY_DEFAULT)
-                                  @SearchByConstraint String searchByLine)
-    {
+                                  @SearchByConstraint String searchByLine) {
         return service.findFilmByTitleDirector(queryExpression, searchByLine);
     }
 
