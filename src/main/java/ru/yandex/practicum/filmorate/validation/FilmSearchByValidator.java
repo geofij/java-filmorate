@@ -10,7 +10,9 @@ public class FilmSearchByValidator implements ConstraintValidator<SearchByConstr
     public static final String SEARCH_BY_DIRECTOR = "director";
 
     @Override
-    public void initialize(SearchByConstraint searchByConstraint) { }
+    public void initialize(SearchByConstraint searchByConstraint) {
+    // Возможно пустой метод необязателен, но я нашёл решение именно с ним
+    }
 
     @Override
     public boolean isValid(String searchBy, ConstraintValidatorContext ctx) {
