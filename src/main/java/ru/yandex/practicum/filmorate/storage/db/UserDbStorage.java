@@ -5,16 +5,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final FriendsStorage friendsStorage;
 
     private static User createUserFromDb(ResultSet rs, int rowNum) throws SQLException {
         return User.builder()
@@ -71,5 +75,14 @@ public class UserDbStorage implements UserStorage {
         getById(id);
         jdbcTemplate.update("delete from users where id = ?", id);
         return true;
+    }
+
+    public boolean isTheyFriends(long idFirstUser, long idSecondUser) {
+        User user = getById(idFirstUser);
+        User secondUser = getById(idSecondUser);
+
+        Set<User> friendsFirst = new HashSet<>(friendsStorage.getUserFriends(idFirstUser));
+
+        return friendsFirst.contains(secondUser);
     }
 }
