@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.feed.Feed;
 import ru.yandex.practicum.filmorate.storage.db.FeedDbStorage;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 
 @Slf4j
 @Service
