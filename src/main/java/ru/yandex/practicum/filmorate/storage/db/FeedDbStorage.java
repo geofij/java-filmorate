@@ -61,10 +61,7 @@ public class FeedDbStorage implements FeedStorage {
     @Override
     public LinkedHashSet<Feed> getFeedByUserid(long userId) {
         String sqlQuery = "SELECT * FROM FEED WHERE USER_ID = ?";
-        LinkedHashSet<Feed> feeds = new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, FeedDbStorage::createFeed, userId));
-        if (feeds.isEmpty()) {
-            throw new DataNotFoundException("Feed with user ID-" + userId + " not found");
-        } else return feeds;
+        return new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, FeedDbStorage::createFeed, userId));
     }
 
     @Override

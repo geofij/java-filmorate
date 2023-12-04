@@ -60,7 +60,7 @@ public class UserDbStorage implements UserStorage {
                 UserDbStorage::createUserFromDb, id);
 
         if (usersList.size() != 1) {
-            throw new DataNotFoundException("User id-{} not found");
+            throw new DataNotFoundException("User id- " + id + " not found");
         }
 
         return usersList.get(0);
