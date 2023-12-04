@@ -27,7 +27,7 @@ class UserDbStorageTest {
                 .name("Ivan Petrov")
                 .birthday(LocalDate.of(1990, 1, 1))
                 .build();
-        UserDbStorage userStorage = new UserDbStorage(jdbcTemplate,friendsStorage );
+        UserDbStorage userStorage = new UserDbStorage(jdbcTemplate, friendsStorage);
         userStorage.create(newUser);
 
         User savedUser = userStorage.getById(1);
