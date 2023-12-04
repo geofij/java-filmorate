@@ -12,9 +12,4 @@ public class InMemoryUserStorage extends InMemoryBaseStorage<User> implements Us
     public boolean delete(long id) {
         return true;
     }
-
-    @Override
-    public boolean isTheyFriends(long idFirstUser, long idSecondUser) {
-        return false;
-    }
 }
