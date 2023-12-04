@@ -93,13 +93,15 @@ public class UserController {
         service.get(id);
         return feedService.getFeedByUserid(id);
     }
-//для теста
+
+    //для теста
     @GetMapping("/feed")
     public LinkedHashSet<Feed> getAllFeeds() {
         log.info("Getting all feeds");
         return feedService.getAll();
     }
-//не забыть улалить
+
+    //не забыть улалить
     public void validate(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());

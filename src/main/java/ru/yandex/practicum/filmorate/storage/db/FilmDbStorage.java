@@ -44,7 +44,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(),
                 film.getMpa().getId(),
                 film.getId()
-                );
+        );
 
         this.updateGenres(film);
         this.updateDirectors(film);
@@ -176,7 +176,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setGenres(new HashSet<>(filmGenres));
 
         List<Director> filmDirectors = jdbcTemplate.query("select * from film_director as fd " +
-                "join director as d on fd.director_id = d.id where film_id = ?",
+                        "join director as d on fd.director_id = d.id where film_id = ?",
                 DirectorDbStorage::createDirector,
                 rs.getLong("film_id"));
 

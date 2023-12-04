@@ -70,14 +70,12 @@ public class ReviewService {
     public void addReaction(Long reviewId, Boolean isPositive, Long userId) {
         reviewStorage.getById(reviewId);
         userStorage.getById(userId);
-        feedStorage.addFeed(userId, Event.LIKE, Operation.ADD, reviewId);
         reviewStorage.addReaction(reviewId, isPositive, userId);
     }
 
     public void delReaction(Long reviewId, Long userId) {
         reviewStorage.getById(reviewId);
         userStorage.getById(userId);
-        feedStorage.addFeed(userId, Event.LIKE, Operation.REMOVE, reviewId);
         reviewStorage.delReaction(reviewId, userId);
     }
 }

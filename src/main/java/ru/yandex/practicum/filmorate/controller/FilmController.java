@@ -16,8 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmService service;
     public static final LocalDate START_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private final FilmService service;
     private long idCounter;
 
     @PostMapping
