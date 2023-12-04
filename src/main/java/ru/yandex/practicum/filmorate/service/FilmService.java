@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -19,23 +20,26 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private final LikesStorage likesStorage;
+    private final DirectorStorage directorStorage;
 
     @Autowired
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
                        @Qualifier("userDbStorage") UserStorage userStorage,
-                       LikesStorage likesStorage) {
+                       LikesStorage likesStorage,
+                       DirectorStorage directorStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.likesStorage = likesStorage;
+        this.directorStorage = directorStorage;
     }
 
     public void create(Film film) {
         filmStorage.create(film);
     }
 
-    public void update(Film film) {
+    public Film update(Film film) {
         filmStorage.getById(film.getId());
-        filmStorage.update(film);
+        return filmStorage.update(film);
     }
 
     public List<Film> getAllFilms() {
@@ -75,6 +79,11 @@ public class FilmService {
                 .sorted(Comparator.comparing(Film::getRate, Comparator.reverseOrder()))
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    public List<Film> getSortedFilmsByDirector(String sortType, long directorId) {
+        directorStorage.getById(directorId);
+        return filmStorage.getSortedFilmsByDirector(sortType, directorId);
     }
 
     public LinkedHashSet<Film> getCommonFilmsSortedByLikes(long userId, long friendId) {

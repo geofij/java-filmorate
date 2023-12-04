@@ -34,9 +34,8 @@ public class FilmController {
     @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         validate(film);
-        service.update(film);
         log.info("Updating film {}", film);
-        return service.get(film.getId());
+        return service.update(film);
     }
 
     @GetMapping
@@ -72,6 +71,13 @@ public class FilmController {
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable("id") long id) {
         return service.delete(id);
+    }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getSortedFilmsByDirector(@RequestParam("sortBy") String sortType,
+                                               @PathVariable("directorId") long directorId) {
+        log.info("Getting director id-{}'s films sorted by {}", directorId, sortType);
+        return service.getSortedFilmsByDirector(sortType, directorId);
     }
 
     @GetMapping("/common")

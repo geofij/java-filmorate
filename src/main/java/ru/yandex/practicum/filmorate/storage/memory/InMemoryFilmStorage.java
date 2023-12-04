@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.util.List;
+
 import java.util.LinkedHashSet;
 
 @Component
@@ -12,6 +14,11 @@ public class InMemoryFilmStorage extends InMemoryBaseStorage<Film> implements Fi
     @Override
     public boolean delete(long id) {
         return false;
+    }
+
+    @Override
+    public List<Film> getSortedFilmsByDirector(String sortType, long directorId) {
+        return null;
     }
 
     @Override
