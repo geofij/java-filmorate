@@ -18,4 +18,14 @@ public class InMemoryFilmStorage extends InMemoryBaseStorage<Film> implements Fi
     public List<Film> getSortedFilmsByDirector(String sortType, long directorId) {
         return null;
     }
+
+    @Override
+    public List<Film> findByTitle(String query) {
+        return null;
+    }
+
+    @Override
+    public List<Film> findByDirector(String query) {
+        return null;
+    }
 }

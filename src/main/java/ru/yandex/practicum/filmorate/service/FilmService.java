@@ -9,9 +9,13 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.filmorate.validation.FilmSearchByValidator.SEARCH_BY_DIRECTOR;
+import static ru.yandex.practicum.filmorate.validation.FilmSearchByValidator.SEARCH_BY_TITLE;
 
 @Service
 public class FilmService {
@@ -64,6 +68,20 @@ public class FilmService {
 
     public boolean delete(long id) {
         return filmStorage.delete(id);
+    }
+
+    public List<Film> findFilmByTitleDirector(String searchQuery, String searchByLine) {
+        String[] searchByItems = searchByLine.split(",");
+        List<Film> films = new ArrayList<>();
+        for (String byItem: searchByItems) {
+            if (byItem.equals(SEARCH_BY_TITLE)) {
+                films.addAll(filmStorage.findByTitle(searchQuery));
+            }
+            else if (byItem.equals(SEARCH_BY_DIRECTOR)) {
+                films.addAll(filmStorage.findByDirector(searchQuery));
+            }
+        }
+        return films;
     }
 
     public List<Film> getPopular(int count) {
