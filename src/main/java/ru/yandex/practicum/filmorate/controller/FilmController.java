@@ -70,10 +70,12 @@ public class FilmController {
         log.info("Getting {} popular films. Filtering is {}", count, getFilteringLogRecord(genreId, year));
         Long genreIdParsed = null;
         Integer releaseYearParsed = null;
-        if(genreId != null)
+        if (genreId != null) {
             genreIdParsed = Long.parseLong(genreId);
-        if(year != null)
+        }
+        if (year != null) {
             releaseYearParsed = Integer.parseInt(year);
+        }
         return service.getPopular(Integer.parseInt(count), genreIdParsed, releaseYearParsed);
     }
 
