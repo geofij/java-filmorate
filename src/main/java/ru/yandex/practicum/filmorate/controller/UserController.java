@@ -94,14 +94,6 @@ public class UserController {
         return feedService.getFeedByUserid(id);
     }
 
-    //для теста
-    @GetMapping("/feed")
-    public LinkedHashSet<Feed> getAllFeeds() {
-        log.info("Getting all feeds");
-        return feedService.getAll();
-    }
-
-    //не забыть улалить
     public void validate(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
