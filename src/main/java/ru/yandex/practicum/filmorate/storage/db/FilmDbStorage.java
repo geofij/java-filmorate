@@ -170,9 +170,11 @@ public class FilmDbStorage implements FilmStorage {
                 "m.name as mpa_name " +
                 "from films as f " +
                 "join mpa as m on f.mpa_id = m.id " +
-                "join film_director as fd on fd.film_id = f.id " +
-                "join director as d on d.id = fd.director_id " +
-                "where d.name ilike ?", this::createFilmFromDb, "%" + query + "%");
+                "where f.id in " +
+                        "(select fd.film_id from film_director fd " +
+                        "join director d on d.id = fd.director_id " +
+                        "where d.name ilike ?)",
+                this::createFilmFromDb, "%" + query + "%");
     }
 
     private Film createFilmFromDb(ResultSet rs, int rowNum) throws SQLException {
