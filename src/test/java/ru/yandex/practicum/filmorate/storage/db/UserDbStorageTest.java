@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 
 import java.time.LocalDate;
 
@@ -15,6 +16,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserDbStorageTest {
     private final JdbcTemplate jdbcTemplate;
+    private final FriendsStorage friendsStorage;
 
     @Test
     public void testFindUserById() {
@@ -25,7 +27,7 @@ class UserDbStorageTest {
                 .name("Ivan Petrov")
                 .birthday(LocalDate.of(1990, 1, 1))
                 .build();
-        UserDbStorage userStorage = new UserDbStorage(jdbcTemplate);
+        UserDbStorage userStorage = new UserDbStorage(jdbcTemplate,friendsStorage );
         userStorage.create(newUser);
 
         User savedUser = userStorage.getById(1);
