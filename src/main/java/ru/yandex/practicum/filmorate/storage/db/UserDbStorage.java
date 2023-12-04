@@ -26,7 +26,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void update(User user) {
+    public User update(User user) {
         jdbcTemplate.update("update users set "
                         + "name = ?, login = ?, email = ?, birthday = ? "
                         + "where id = ?",
@@ -35,6 +35,8 @@ public class UserDbStorage implements UserStorage {
                 user.getEmail(),
                 user.getBirthday(),
                 user.getId());
+
+        return getById(user.getId());
     }
 
     @Override
