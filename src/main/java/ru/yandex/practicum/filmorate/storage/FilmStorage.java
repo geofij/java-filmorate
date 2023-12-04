@@ -7,11 +7,13 @@ import java.util.List;
 public interface FilmStorage {
     void create(Film data);
 
-    void update(Film data);
+    Film update(Film data);
 
     List<Film> getAllData();
 
     Film getById(long id);
 
     boolean delete(long id);
+
+    List<Film> getSortedFilmsByDirector(String sortType, long directorId);
 }

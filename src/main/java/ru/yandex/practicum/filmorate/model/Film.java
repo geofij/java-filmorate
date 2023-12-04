@@ -32,5 +32,6 @@ public class Film extends BaseUnit {
     private Mpa mpa;
 
     private Set<Genre> genres;
+    private Set<Director> directors;
     private int rate;
 }
