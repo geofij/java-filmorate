@@ -14,6 +14,4 @@ public interface UserStorage {
     User getById(long id);
 
     boolean delete(long id);
-
-    boolean isTheyFriends(long idFirstUser, long idSecondUser);
 }

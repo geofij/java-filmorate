@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.DirectorStorage;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.LikesStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -20,16 +18,19 @@ public class FilmService {
     private final UserStorage userStorage;
     private final LikesStorage likesStorage;
     private final DirectorStorage directorStorage;
+    private final FriendsStorage friendsStorage;
 
     @Autowired
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
                        @Qualifier("userDbStorage") UserStorage userStorage,
                        LikesStorage likesStorage,
-                       DirectorStorage directorStorage) {
+                       DirectorStorage directorStorage,
+                       FriendsStorage friendsStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.likesStorage = likesStorage;
         this.directorStorage = directorStorage;
+        this.friendsStorage = friendsStorage;
     }
 
     public void create(Film film) {
@@ -86,8 +87,10 @@ public class FilmService {
     }
 
     public LinkedHashSet<Film> getCommonFilmsSortedByLikes(long userId, long friendId) {
-//        if (userStorage.isTheyFriends(userId, friendId)) {
-            return filmStorage.getCommonFilmsSortedByLikes(userId, friendId);
+        userStorage.getById(userId);
+        User secondUser = userStorage.getById(friendId);
+//        if (friendsStorage.isTheyFriends(userId, friendId, secondUser)) {
+        return filmStorage.getCommonFilmsSortedByLikes(userId, friendId);
 //        } else {
 //            throw new DataNotFoundException("Users " + userId + " and " + friendId + " isn't friends");
 //        }

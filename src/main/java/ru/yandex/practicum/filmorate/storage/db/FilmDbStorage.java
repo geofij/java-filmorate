@@ -12,12 +12,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -178,7 +173,7 @@ public class FilmDbStorage implements FilmStorage {
         film.setGenres(new HashSet<>(filmGenres));
 
         List<Director> filmDirectors = jdbcTemplate.query("select * from film_director as fd " +
-                "join director as d on fd.director_id = d.id where film_id = ?",
+                        "join director as d on fd.director_id = d.id where film_id = ?",
                 DirectorDbStorage::createDirector,
                 rs.getLong("film_id"));
 

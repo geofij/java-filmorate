@@ -10,4 +10,6 @@ public interface FriendsStorage {
     void addFriend(long userId, long friendId);
 
     List<User> getUserFriends(long userId);
+
+    boolean isTheyFriends(long idFirstUser, long idSecondUser, User secondUser);
 }

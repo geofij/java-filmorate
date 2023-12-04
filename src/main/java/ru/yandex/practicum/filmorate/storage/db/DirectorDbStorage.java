@@ -19,6 +19,13 @@ import java.util.List;
 public class DirectorDbStorage implements DirectorStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    public static Director createDirector(ResultSet rs, int rowNum) throws SQLException {
+        return Director.builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .build();
+    }
+
     @Override
     public Director create(Director data) {
         String sqlQuery = "insert into director (name) values (?)";
@@ -64,12 +71,5 @@ public class DirectorDbStorage implements DirectorStorage {
         getById(id);
         jdbcTemplate.update("delete from director where id = ?", id);
         return true;
-    }
-
-    public static Director createDirector(ResultSet rs, int rowNum) throws SQLException {
-        return Director.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .build();
     }
 }
