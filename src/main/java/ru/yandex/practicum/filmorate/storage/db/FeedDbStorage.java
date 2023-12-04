@@ -63,7 +63,7 @@ public class FeedDbStorage implements FeedStorage {
         String sqlQuery = "SELECT * FROM FEED WHERE USER_ID = ?";
         LinkedHashSet<Feed> feeds = new LinkedHashSet<>(jdbcTemplate.query(sqlQuery, FeedDbStorage::createFeed, userId));
         if (feeds.isEmpty()) {
-            throw new DataNotFoundException("Feed with event ID-" + userId + " not found");
+            throw new DataNotFoundException("Feed with user ID-" + userId + " not found");
         } else return feeds;
     }
 
