@@ -69,7 +69,6 @@ public class FilmService {
         feedStorage.addFeed(idUser, Event.LIKE, Operation.REMOVE, idFilm);
 
         return likesStorage.deleteLike(idFilm, idUser);
-
     }
 
     public boolean delete(long id) {
