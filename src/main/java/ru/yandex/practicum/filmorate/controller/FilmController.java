@@ -64,19 +64,11 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count,
-                                      @RequestParam(required = false) String genreId,
-                                      @RequestParam(required = false) String year) {
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count,
+                                      @RequestParam(required = false) Long genreId,
+                                      @RequestParam(required = false) Integer year) {
         log.info("Getting {} popular films. Filtering is {}", count, getFilteringLogRecord(genreId, year));
-        Long genreIdParsed = null;
-        Integer releaseYearParsed = null;
-        if (genreId != null) {
-            genreIdParsed = Long.parseLong(genreId);
-        }
-        if (year != null) {
-            releaseYearParsed = Integer.parseInt(year);
-        }
-        return service.getPopular(Integer.parseInt(count), genreIdParsed, releaseYearParsed);
+        return service.getPopular(count, genreId, year);
     }
 
     @DeleteMapping("/{id}")
@@ -98,7 +90,7 @@ public class FilmController {
         }
     }
 
-    private String getFilteringLogRecord(String genreId, String releaseYear) {
+    private String getFilteringLogRecord(Long genreId, Integer releaseYear) {
         StringBuilder filterLoggerBuilder = new StringBuilder();
         if (genreId == null && releaseYear == null) {
             filterLoggerBuilder.append("disabled");
@@ -106,9 +98,9 @@ public class FilmController {
             filterLoggerBuilder.append("enabled with filtering params: ");
             Map<String, String> filteringParams = new HashMap<>();
             if (genreId != null)
-                filteringParams.put("genreId", genreId);
+                filteringParams.put("genreId", String.valueOf(genreId));
             if (releaseYear != null)
-                filteringParams.put("releaseYear", releaseYear);
+                filteringParams.put("releaseYear", String.valueOf(releaseYear));
             filterLoggerBuilder.append(filteringParams);
         }
         return filterLoggerBuilder.toString();
