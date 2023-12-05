@@ -18,19 +18,16 @@ public class FilmService {
     private final UserStorage userStorage;
     private final LikesStorage likesStorage;
     private final DirectorStorage directorStorage;
-    private final FriendsStorage friendsStorage;
 
     @Autowired
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
                        @Qualifier("userDbStorage") UserStorage userStorage,
                        LikesStorage likesStorage,
-                       DirectorStorage directorStorage,
-                       FriendsStorage friendsStorage) {
+                       DirectorStorage directorStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.likesStorage = likesStorage;
         this.directorStorage = directorStorage;
-        this.friendsStorage = friendsStorage;
     }
 
     public void create(Film film) {
@@ -89,10 +86,6 @@ public class FilmService {
     public LinkedHashSet<Film> getCommonFilmsSortedByLikes(long userId, long friendId) {
         userStorage.getById(userId);
         User secondUser = userStorage.getById(friendId);
-//        if (friendsStorage.isTheyFriends(userId, friendId, secondUser)) {
         return filmStorage.getCommonFilmsSortedByLikes(userId, friendId);
-//        } else {
-//            throw new DataNotFoundException("Users " + userId + " and " + friendId + " isn't friends");
-//        }
     }
 }
