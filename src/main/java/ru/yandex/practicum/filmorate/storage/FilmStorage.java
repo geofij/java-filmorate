@@ -18,4 +18,8 @@ public interface FilmStorage {
     List<Film> getFilteredData(Long genreId, Integer releaseYear);
 
     List<Film> getSortedFilmsByDirector(String sortType, long directorId);
+
+    List<Film> findByTitle(String query);
+
+    List<Film> findByDirector(String query);
 }
