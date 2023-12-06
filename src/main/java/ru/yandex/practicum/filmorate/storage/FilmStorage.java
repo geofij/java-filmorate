@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public interface FilmStorage {
@@ -18,6 +19,8 @@ public interface FilmStorage {
     List<Film> getFilteredData(Long genreId, Integer releaseYear);
 
     List<Film> getSortedFilmsByDirector(String sortType, long directorId);
+
+    LinkedHashSet<Film> getCommonFilmsSortedByLikes(long userId, long friendId);
 
     List<Film> findByTitle(String query);
 

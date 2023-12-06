@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 
+
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validation.SearchByConstraint;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,6 +104,13 @@ public class FilmController {
     public List<Film> getSortedFilmsByDirector(@RequestParam("sortBy") String sortType, @PathVariable("directorId") long directorId) {
         log.info("Getting director id-{}'s films sorted by {}", directorId, sortType);
         return service.getSortedFilmsByDirector(sortType, directorId);
+    }
+
+    @GetMapping("/common")
+    public LinkedHashSet<Film> getCommonFilmsSortedByLikes(@RequestParam("userId") long userId,
+                                                           @RequestParam("friendId") long friendId) {
+        log.info("Getting common films for user:{}, and user:{}", userId, friendId);
+        return service.getCommonFilmsSortedByLikes(userId, friendId);
     }
 
     public void validate(Film film) {

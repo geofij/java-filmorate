@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.feed.Event;
 import ru.yandex.practicum.filmorate.model.feed.Operation;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -107,5 +109,11 @@ public class FilmService {
     public List<Film> getSortedFilmsByDirector(String sortType, long directorId) {
         directorStorage.getById(directorId);
         return filmStorage.getSortedFilmsByDirector(sortType, directorId);
+    }
+
+    public LinkedHashSet<Film> getCommonFilmsSortedByLikes(long userId, long friendId) {
+        userStorage.getById(userId);
+        User secondUser = userStorage.getById(friendId);
+        return filmStorage.getCommonFilmsSortedByLikes(userId, friendId);
     }
 }
