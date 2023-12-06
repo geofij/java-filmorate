@@ -12,7 +12,11 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
@@ -141,6 +145,63 @@ public class FilmDbStorage implements FilmStorage {
         getById(id);
         jdbcTemplate.update("delete from films where id = ?", id);
         return true;
+    }
+
+    @Override
+
+    public List<Film> getFilteredData(Long genreId, Integer releaseYear) {
+        StringBuilder queryBuilder = new StringBuilder("select f.id as film_id, "
+                + "f.name as film_name, "
+                + "f.description as description, "
+                + "f.duration as duration, "
+                + "f.release_date as release_date, "
+                + "f.mpa_id as mpa_id, "
+                + "m.name as mpa_name"
+                + " from films as f join mpa as m on f.mpa_id = m.id");
+
+        if (releaseYear != null) {
+            queryBuilder.append(" where extract(year from f.release_date) = ").append(releaseYear);
+        }
+        if (genreId != null) {
+            if (queryBuilder.indexOf("where") == -1) {
+                queryBuilder.append(" where ");
+            } else {
+                queryBuilder.append(" and ");
+            }
+            queryBuilder.append(" f.id in (select film_id from film_genres where genre_id = ").append(genreId).append(")");
+        }
+
+        return jdbcTemplate.query(queryBuilder.toString(), this::createFilmFromDb);
+    }
+
+    public List<Film> findByTitle(String query) {
+        return jdbcTemplate.query("select f.id as film_id, " +
+                        "f.name as film_name, " +
+                        "f.description as description, " +
+                        "f.duration as duration, " +
+                        "f.release_date as release_date, " +
+                        "f.mpa_id as mpa_id, " +
+                        "m.name as mpa_name " +
+                        "from films as f join mpa as m on f.mpa_id = m.id " +
+                        "where f.name ilike ?", this::createFilmFromDb,"%" + query + "%");
+    }
+
+    @Override
+    public List<Film> findByDirector(String query) {
+        return jdbcTemplate.query("select f.id as film_id, " +
+                "f.name as film_name, " +
+                "f.description as description, " +
+                "f.duration as duration, " +
+                "f.release_date as release_date, " +
+                "f.mpa_id as mpa_id, " +
+                "m.name as mpa_name " +
+                "from films as f " +
+                "join mpa as m on f.mpa_id = m.id " +
+                "where f.id in " +
+                        "(select fd.film_id from film_director fd " +
+                        "join director d on d.id = fd.director_id " +
+                        "where d.name ilike ?)",
+                this::createFilmFromDb, "%" + query + "%");
     }
 
     private Film createFilmFromDb(ResultSet rs, int rowNum) throws SQLException {

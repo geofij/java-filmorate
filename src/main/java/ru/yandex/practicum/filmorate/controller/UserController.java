@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.feed.Feed;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +20,7 @@ import java.util.Set;
 @RequestMapping("/users")
 public class UserController {
     private final UserService service;
+    private final FeedService feedService;
     private long idCounter;
 
     @PostMapping
@@ -81,6 +85,13 @@ public class UserController {
     public Set<Film> getRecommendations(@PathVariable("id") long id) {
         log.info("Getting recommendations for user with id-{}", id);
         return service.getRecommendations(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public LinkedHashSet<Feed> getFeedByUserId(@PathVariable("id") long id) {
+        log.info("Getting feed for user id: {}", id);
+        service.get(id);
+        return feedService.getFeedByUserid(id);
     }
 
     public void validate(User user) {

@@ -10,8 +10,12 @@ import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 import ru.yandex.practicum.filmorate.storage.LikesStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
+import ru.yandex.practicum.filmorate.model.feed.Event;
+import ru.yandex.practicum.filmorate.model.feed.Operation;
+import ru.yandex.practicum.filmorate.storage.*;
+
 import java.util.AbstractMap.SimpleEntry;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,16 +24,19 @@ public class UserService {
     private final FriendsStorage friendsStorage;
     private final LikesStorage likesStorage;
     private final FilmStorage filmStorage;
+    private final FeedStorage feedStorage;
 
     @Autowired
     public UserService(@Qualifier("userDbStorage") UserStorage storage,
                        FriendsStorage friendsStorage,
                        @Qualifier("filmDbStorage") FilmStorage filmStorage,
-                       LikesStorage likesStorage) {
+                       LikesStorage likesStorage,
+                       FeedStorage feedStorage) {
         this.userStorage = storage;
         this.friendsStorage = friendsStorage;
         this.filmStorage = filmStorage;
         this.likesStorage = likesStorage;
+        this.feedStorage = feedStorage;
     }
 
     public void create(User user) {
@@ -58,11 +65,13 @@ public class UserService {
         userStorage.getById(idFriend);
 
         friendsStorage.addFriend(idUser, idFriend);
+        feedStorage.addFeed(idUser, Event.FRIEND, Operation.ADD, idFriend);
     }
 
     public boolean deleteFriend(long idUser, long idFriend) {
         userStorage.getById(idUser);
         userStorage.getById(idFriend);
+        feedStorage.addFeed(idUser, Event.FRIEND, Operation.REMOVE, idFriend);
 
         return friendsStorage.deleteFriend(idUser, idFriend);
     }
