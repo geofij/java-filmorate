@@ -8,9 +8,13 @@ import ru.yandex.practicum.filmorate.model.feed.Event;
 import ru.yandex.practicum.filmorate.model.feed.Operation;
 import ru.yandex.practicum.filmorate.storage.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.filmorate.validation.FilmSearchByValidator.SEARCH_BY_DIRECTOR;
+import static ru.yandex.practicum.filmorate.validation.FilmSearchByValidator.SEARCH_BY_TITLE;
 
 @Service
 public class FilmService {
@@ -72,8 +76,23 @@ public class FilmService {
         return filmStorage.delete(id);
     }
 
-    public List<Film> getPopular(int count) {
-        List<Film> films = filmStorage.getAllData();
+    public List<Film> findFilmByTitleDirector(String searchQuery, String searchByLine) {
+        String[] searchByItems = searchByLine.split(",");
+        List<Film> films = new ArrayList<>();
+        for (String byItem: searchByItems) {
+            if (byItem.equals(SEARCH_BY_TITLE)) {
+                films.addAll(filmStorage.findByTitle(searchQuery));
+            } else if (byItem.equals(SEARCH_BY_DIRECTOR)) {
+                films.addAll(filmStorage.findByDirector(searchQuery));
+            }
+        }
+        return films.stream()
+                .sorted(Comparator.comparing(Film::getDirectors, (d1, d2) -> d2.size() - d1.size()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Film> getPopular(int count, Long genreId, Integer releaseYear) {
+        List<Film> films = filmStorage.getFilteredData(genreId, releaseYear);
 
         if (count > films.size()) {
             count = films.size();
