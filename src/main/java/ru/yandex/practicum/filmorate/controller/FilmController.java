@@ -21,7 +21,9 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validation.SearchByConstraint;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ru.yandex.practicum.filmorate.validation.FilmSearchByValidator.SEARCH_BY_DEFAULT;
 
@@ -77,9 +79,11 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
-        log.info("Getting {} popular films", count);
-        return service.getPopular(Integer.parseInt(count));
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count,
+                                      @RequestParam(required = false) Long genreId,
+                                      @RequestParam(required = false) Integer year) {
+        log.info("Getting {} popular films. Filtering is {}", count, getFilteringLogRecord(genreId, year));
+        return service.getPopular(count, genreId, year);
     }
 
     @DeleteMapping("/{id}")
@@ -105,5 +109,21 @@ public class FilmController {
             log.debug("Fail validation film {}", film);
             throw new ValidationException("Film release date is invalid");
         }
+    }
+
+    private String getFilteringLogRecord(Long genreId, Integer releaseYear) {
+        StringBuilder filterLoggerBuilder = new StringBuilder();
+        if (genreId == null && releaseYear == null) {
+            filterLoggerBuilder.append("disabled");
+        } else {
+            filterLoggerBuilder.append("enabled with filtering params: ");
+            Map<String, String> filteringParams = new HashMap<>();
+            if (genreId != null)
+                filteringParams.put("genreId", String.valueOf(genreId));
+            if (releaseYear != null)
+                filteringParams.put("releaseYear", String.valueOf(releaseYear));
+            filterLoggerBuilder.append(filteringParams);
+        }
+        return filterLoggerBuilder.toString();
     }
 }

@@ -15,6 +15,8 @@ public interface FilmStorage {
 
     boolean delete(long id);
 
+    List<Film> getFilteredData(Long genreId, Integer releaseYear);
+
     List<Film> getSortedFilmsByDirector(String sortType, long directorId);
 
     List<Film> findByTitle(String query);
