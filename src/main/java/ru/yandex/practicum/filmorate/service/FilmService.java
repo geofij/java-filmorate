@@ -4,10 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.DirectorStorage;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.LikesStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.model.feed.Event;
+import ru.yandex.practicum.filmorate.model.feed.Operation;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,19 +18,23 @@ import static ru.yandex.practicum.filmorate.validation.FilmSearchByValidator.SEA
 
 @Service
 public class FilmService {
+
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private final LikesStorage likesStorage;
+    private final FeedStorage feedStorage;
     private final DirectorStorage directorStorage;
 
     @Autowired
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
                        @Qualifier("userDbStorage") UserStorage userStorage,
-                       LikesStorage likesStorage,
-                       DirectorStorage directorStorage) {
+                       FeedStorage feedStorage,
+                       DirectorStorage directorStorage,
+                       LikesStorage likesStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.likesStorage = likesStorage;
+        this.feedStorage = feedStorage;
         this.directorStorage = directorStorage;
     }
 
@@ -57,13 +60,16 @@ public class FilmService {
         userStorage.getById(idUser);
 
         likesStorage.addLike(idFilm, idUser);
+        feedStorage.addFeed(idUser, Event.LIKE, Operation.ADD, idFilm);
     }
 
     public boolean deleteLike(long idFilm, long idUser) {
         filmStorage.getById(idFilm);
         userStorage.getById(idUser);
+        feedStorage.addFeed(idUser, Event.LIKE, Operation.REMOVE, idFilm);
 
         return likesStorage.deleteLike(idFilm, idUser);
+
     }
 
     public boolean delete(long id) {

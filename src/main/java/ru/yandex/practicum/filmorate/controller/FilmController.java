@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,8 +32,8 @@ import static ru.yandex.practicum.filmorate.validation.FilmSearchByValidator.SEA
 @RequestMapping("/films")
 @Validated
 public class FilmController {
-    private final FilmService service;
     public static final LocalDate START_RELEASE_DATE = LocalDate.of(1895, 12, 28);
+    private final FilmService service;
     private long idCounter;
 
     @PostMapping

@@ -16,6 +16,16 @@ import java.util.List;
 public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    private static User createUserFromDb(ResultSet rs, int rowNum) throws SQLException {
+        return User.builder()
+                .id(rs.getLong("id"))
+                .name(rs.getString("name"))
+                .email(rs.getString("email"))
+                .login(rs.getString("login"))
+                .birthday(rs.getDate("birthday").toLocalDate())
+                .build();
+    }
+
     @Override
     public void create(User user) {
         jdbcTemplate.update("insert into users (name, login, email, birthday) values (?, ?, ?, ?)",
@@ -50,7 +60,7 @@ public class UserDbStorage implements UserStorage {
                 UserDbStorage::createUserFromDb, id);
 
         if (usersList.size() != 1) {
-            throw new DataNotFoundException("User id-{} not found");
+            throw new DataNotFoundException("User id- " + id + " not found");
         }
 
         return usersList.get(0);
@@ -61,15 +71,5 @@ public class UserDbStorage implements UserStorage {
         getById(id);
         jdbcTemplate.update("delete from users where id = ?", id);
         return true;
-    }
-
-    private static User createUserFromDb(ResultSet rs, int rowNum) throws SQLException {
-        return User.builder()
-                .id(rs.getLong("id"))
-                .name(rs.getString("name"))
-                .email(rs.getString("email"))
-                .login(rs.getString("login"))
-                .birthday(rs.getDate("birthday").toLocalDate())
-                .build();
     }
 }
