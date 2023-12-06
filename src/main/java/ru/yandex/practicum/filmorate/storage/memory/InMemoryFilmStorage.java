@@ -29,6 +29,7 @@ public class InMemoryFilmStorage extends InMemoryBaseStorage<Film> implements Fi
     public LinkedHashSet<Film> getCommonFilmsSortedByLikes(long firstId, long secondId) {
         return null;
     }
+
     public List<Film> findByTitle(String query) {
         return null;
     }
