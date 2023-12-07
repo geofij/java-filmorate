@@ -2,11 +2,14 @@ package ru.yandex.practicum.filmorate.storage.db;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -27,12 +30,19 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void create(User user) {
-        jdbcTemplate.update("insert into users (name, login, email, birthday) values (?, ?, ?, ?)",
-                user.getName(),
-                user.getLogin(),
-                user.getEmail(),
-                user.getBirthday());
+    public User create(User user) {
+        String sqlQuery = "insert into users (name, login, email, birthday) values (?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(x -> {
+                    PreparedStatement stmt = x.prepareStatement(sqlQuery, new String[]{"id"});
+                    stmt.setString(1, user.getName());
+                    stmt.setString(2, user.getLogin());
+                    stmt.setString(3, user.getEmail());
+                    stmt.setDate(4, java.sql.Date.valueOf(user.getBirthday()));
+                    return stmt;
+                }, keyHolder
+        );
+        return getById(keyHolder.getKey().longValue());
     }
 
     @Override

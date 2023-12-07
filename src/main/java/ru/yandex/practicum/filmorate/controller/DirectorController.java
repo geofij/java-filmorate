@@ -31,7 +31,6 @@ public class DirectorController {
 
     @GetMapping
     public List<Director> getDirectors() {
-        log.info("Getting all directors");
         return directorService.getAllDirectors();
     }
 

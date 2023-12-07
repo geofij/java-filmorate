@@ -16,8 +16,9 @@ public class InMemoryBaseStorage<T extends BaseUnit> implements AbstractStorage<
     private final Map<Long, T> storage = new HashMap<>();
 
     @Override
-    public void create(T data) {
+    public T create(T data) {
         storage.put(data.getId(), data);
+        return getById(data.getId());
     }
 
     @Override
