@@ -42,7 +42,8 @@ public class FilmController {
     public Film create(@Valid @RequestBody Film film) {
         validate(film);
         log.info("Creating film {}", film);
-        return service.create(film);
+        Long filmId = service.create(film).getId();
+        return service.get(filmId);
     }
 
     @PutMapping
