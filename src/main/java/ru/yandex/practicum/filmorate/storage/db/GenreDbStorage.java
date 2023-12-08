@@ -16,6 +16,13 @@ import java.util.List;
 public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    public static Genre createGenre(ResultSet rs, String columnName) throws SQLException {
+        return Genre.builder()
+                .id(rs.getLong(columnName))
+                .name(rs.getString("name"))
+                .build();
+    }
+
     @Override
     public List<Genre> getAllData() {
         return jdbcTemplate.query("select * from genres",
@@ -32,12 +39,5 @@ public class GenreDbStorage implements GenreStorage {
         }
 
         return genreList.get(0);
-    }
-
-    public static Genre createGenre(ResultSet rs, String columnName) throws SQLException {
-        return Genre.builder()
-                .id(rs.getLong(columnName))
-                .name(rs.getString("name"))
-                .build();
     }
 }

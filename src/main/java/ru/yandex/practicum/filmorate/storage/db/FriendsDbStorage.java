@@ -8,12 +8,24 @@ import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
 public class FriendsDbStorage implements FriendsStorage {
     private final JdbcTemplate jdbcTemplate;
+
+    private static User createUserFromDb(ResultSet rs, int rowNum) throws SQLException {
+        return User.builder()
+                .id(rs.getLong("friend_id"))
+                .name(rs.getString("name"))
+                .email(rs.getString("email"))
+                .login(rs.getString("login"))
+                .birthday(rs.getDate("birthday").toLocalDate())
+                .build();
+    }
 
     @Override
     public void addFriend(long userId, long friendId) {
@@ -31,13 +43,11 @@ public class FriendsDbStorage implements FriendsStorage {
                 + "where user_id = ?", FriendsDbStorage::createUserFromDb, userId);
     }
 
-    private static User createUserFromDb(ResultSet rs, int rowNum) throws SQLException {
-        return User.builder()
-                .id(rs.getLong("friend_id"))
-                .name(rs.getString("name"))
-                .email(rs.getString("email"))
-                .login(rs.getString("login"))
-                .birthday(rs.getDate("birthday").toLocalDate())
-                .build();
+    @Override
+    public boolean isTheyFriends(long idFirstUser, long idSecondUser, User secondUser) {
+
+        Set<User> friendsFirst = new HashSet<>(getUserFriends(idFirstUser));
+
+        return friendsFirst.contains(secondUser);
     }
 }

@@ -30,6 +30,7 @@ class FilmDbStorageTest {
                         .name("G")
                         .build())
                 .genres(new HashSet<>())
+                .directors(new HashSet<>())
                 .duration(200)
                 .build();
         FilmDbStorage filStorage = new FilmDbStorage(jdbcTemplate);

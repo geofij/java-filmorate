@@ -16,17 +16,20 @@ public class InMemoryBaseStorage<T extends BaseUnit> implements AbstractStorage<
     private final Map<Long, T> storage = new HashMap<>();
 
     @Override
-    public void create(T data) {
+    public T create(T data) {
         storage.put(data.getId(), data);
+        return getById(data.getId());
     }
 
     @Override
-    public void update(T data) {
+    public T update(T data) {
         if (!storage.containsKey(data.getId())) {
             log.debug("Fail update data {}", data);
             throw new DataNotFoundException(String.format("Data %s not found", data));
         }
         storage.put(data.getId(), data);
+
+        return getById(data.getId());
     }
 
     @Override

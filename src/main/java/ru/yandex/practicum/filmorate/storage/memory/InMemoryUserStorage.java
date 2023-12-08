@@ -8,4 +8,8 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 @Deprecated
 public class InMemoryUserStorage extends InMemoryBaseStorage<User> implements UserStorage {
 
+    @Override
+    public boolean delete(long id) {
+        return true;
+    }
 }
