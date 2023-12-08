@@ -39,8 +39,8 @@ public class UserService {
         this.feedStorage = feedStorage;
     }
 
-    public void create(User user) {
-        userStorage.create(user);
+    public User create(User user) {
+        return userStorage.create(user);
     }
 
     public User update(User user) {

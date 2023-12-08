@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.storage.db;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
@@ -10,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -22,13 +25,25 @@ public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void create(Film film) {
-        jdbcTemplate.update("insert into films (name, description, release_date, duration, mpa_id) "
-                        + "values (?, ?, ?, ?, ?)", film.getName(), film.getDescription(),
-                film.getReleaseDate(), film.getDuration(), film.getMpa().getId());
+    public Film create(Film film) {
+        String sqlQuery = "insert into films (name, description, release_date, duration, mpa_id) "
+                + "values (?, ?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
+        jdbcTemplate.update(x -> {
+                    PreparedStatement stmt = x.prepareStatement(sqlQuery, new String[]{"id"});
+                    stmt.setString(1, film.getName());
+                    stmt.setString(2, film.getDescription());
+                    stmt.setDate(3, java.sql.Date.valueOf(film.getReleaseDate()));
+                    stmt.setInt(4, film.getDuration());
+                    stmt.setLong(5, film.getMpa().getId());
+                    return stmt;
+                }, keyHolder
+        );
+        film.setId(keyHolder.getKey().longValue());
         this.updateGenres(film);
         this.updateDirectors(film);
+        return film;
     }
 
     @Override

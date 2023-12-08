@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.storage.db;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.DataNotFoundException;
 import ru.yandex.practicum.filmorate.model.feed.Event;
 import ru.yandex.practicum.filmorate.model.feed.Feed;
@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 @Slf4j
 public class FeedDbStorage implements FeedStorage {

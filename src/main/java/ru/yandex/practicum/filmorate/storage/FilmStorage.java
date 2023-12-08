@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 public interface FilmStorage {
-    void create(Film data);
+    Film create(Film data);
 
     Film update(Film data);
 

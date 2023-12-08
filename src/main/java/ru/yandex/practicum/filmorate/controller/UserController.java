@@ -21,16 +21,12 @@ import java.util.Set;
 public class UserController {
     private final UserService service;
     private final FeedService feedService;
-    private long idCounter;
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         validate(user);
-        ++idCounter;
-        user.setId(idCounter);
         log.info("Creating user {}", user);
-        service.create(user);
-        return user;
+        return service.create(user);
     }
 
     @PutMapping
@@ -42,7 +38,6 @@ public class UserController {
 
     @GetMapping
     public List<User> getUsers() {
-        log.info("Getting all users");
         return service.getAllUsers();
     }
 

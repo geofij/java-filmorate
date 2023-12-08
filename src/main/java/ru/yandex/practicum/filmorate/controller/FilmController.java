@@ -37,16 +37,13 @@ import static ru.yandex.practicum.filmorate.validation.FilmSearchByValidator.SEA
 public class FilmController {
     public static final LocalDate START_RELEASE_DATE = LocalDate.of(1895, 12, 28);
     private final FilmService service;
-    private long idCounter;
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         validate(film);
-        ++idCounter;
-        film.setId(idCounter);
         log.info("Creating film {}", film);
-        service.create(film);
-        return service.get(film.getId());
+        Long filmId = service.create(film).getId();
+        return service.get(filmId);
     }
 
     @PutMapping
@@ -58,7 +55,6 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getFilms() {
-        log.info("Getting all films");
         return service.getAllFilms();
     }
 
