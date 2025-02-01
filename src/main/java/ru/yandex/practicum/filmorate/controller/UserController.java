@@ -2,14 +2,17 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.web.bind.annotation.*;
-
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.feed.Feed;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -17,29 +20,24 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService service;
-    private long idCounter;
+    private final FeedService feedService;
 
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         validate(user);
-        ++idCounter;
-        user.setId(idCounter);
         log.info("Creating user {}", user);
-        service.create(user);
-        return user;
+        return service.create(user);
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user) {
         validate(user);
         log.info("Updating user {}", user);
-        service.update(user);
-        return user;
+        return service.update(user);
     }
 
     @GetMapping
     public List<User> getUsers() {
-        log.info("Getting all users");
         return service.getAllUsers();
     }
 
@@ -71,6 +69,24 @@ public class UserController {
     public List<User> getCommonFriends(@PathVariable("id") long id, @PathVariable("otherId") long otherId) {
         log.info("Getting id-{} and id-{} common friends.", id, otherId);
         return service.getCommonFriends(id, otherId);
+    }
+
+    @DeleteMapping("/{id}")
+    public boolean delete(@PathVariable("id") long id) {
+        return service.delete(id);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public Set<Film> getRecommendations(@PathVariable("id") long id) {
+        log.info("Getting recommendations for user with id-{}", id);
+        return service.getRecommendations(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public LinkedHashSet<Feed> getFeedByUserId(@PathVariable("id") long id) {
+        log.info("Getting feed for user id: {}", id);
+        service.get(id);
+        return feedService.getFeedByUserid(id);
     }
 
     public void validate(User user) {

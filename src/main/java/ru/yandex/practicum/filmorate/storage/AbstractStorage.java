@@ -6,9 +6,9 @@ import java.util.List;
 
 @Deprecated
 public interface AbstractStorage<T extends BaseUnit> {
-    void create(T data);
+    T create(T data);
 
-    void update(T data);
+    T update(T data);
 
     List<T> getAllData();
 
